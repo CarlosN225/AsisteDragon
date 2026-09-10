@@ -1,0 +1,766 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#F2EDE6" >
+
+    <!-- ── HEADER ─────────────────────────────────────────────────────── -->
+    <LinearLayout
+        android:id="@+id/header_perfil"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/green_primary"
+        android:orientation="vertical"
+        android:paddingStart="24dp"
+        android:paddingEnd="24dp"
+        android:paddingTop="20dp"
+        android:paddingBottom="56dp">
+
+        <!-- CAMBIO 1: Sin botón izquierdo (back eliminado).
+             Solo título centrado + botón Guardar/Editar a la derecha -->
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:orientation="vertical"
+                android:gravity="center">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Mi Perfil"
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    android:textColor="#FFFFFF"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Datos y configuración"
+                    android:textSize="11sp"
+                    android:textColor="#AAFFFFFF"/>
+            </LinearLayout>
+
+            <!-- CAMBIO 2: Botón Guardar con fondo verde oscuro y texto blanco -->
+            <TextView
+                android:id="@+id/boton_guardar_perfil"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:text="Guardar"
+                android:textSize="13sp"
+                android:textStyle="bold"
+                android:textColor="#FFFFFF"
+                android:background="@drawable/badge_puntual"
+                android:paddingStart="16dp"
+                android:paddingEnd="16dp"
+                android:paddingTop="8dp"
+                android:paddingBottom="8dp"
+                android:visibility="gone"/>
+
+            <!-- Botón EDITAR -->
+            <TextView
+                android:id="@+id/boton_editar_perfil"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:text="Editar"
+                android:textSize="13sp"
+                android:textStyle="bold"
+                android:textColor="#CCFFFFFF"
+                android:paddingStart="8dp"
+                android:paddingEnd="8dp"
+                android:paddingTop="6dp"
+                android:paddingBottom="6dp"/>
+        </RelativeLayout>
+    </LinearLayout>
+
+    <!-- ── AVATAR — flota sobre el header ────────────────────────────── -->
+    <RelativeLayout
+        android:id="@+id/container_avatar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/header_perfil"
+        android:layout_marginTop="-44dp"
+        android:paddingStart="24dp"
+        android:paddingEnd="24dp">
+
+        <RelativeLayout
+            android:layout_width="88dp"
+            android:layout_height="88dp"
+            android:layout_centerHorizontal="true">
+
+            <!-- CAMBIO 3: Icono de persona en lugar del icono de galería -->
+            <ImageView
+                android:id="@+id/imagen_perfil"
+                android:layout_width="88dp"
+                android:layout_height="88dp"
+                android:src="@drawable/ic_persona_perfil"
+                android:background="@drawable/ic_persona_perfil"
+                android:contentDescription="Foto de perfil"
+                android:elevation="2dp"
+                android:scaleType="centerCrop" />
+
+            <!-- Botón editar foto -->
+            <ImageView
+                android:id="@+id/boton_editar_foto"
+                android:layout_width="28dp"
+                android:layout_height="28dp"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentBottom="true"
+                android:src="@android:drawable/ic_menu_camera"
+                android:background="@color/green_primary"
+                android:padding="5dp"
+                android:elevation="4dp"
+                android:contentDescription="Cambiar foto"
+                app:tint="@color/white"/>
+        </RelativeLayout>
+    </RelativeLayout>
+
+    <!-- ── SCROLL ─────────────────────────────────────────────────────── -->
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/container_avatar"
+        android:layout_above="@+id/bottom_navigation"
+        android:fillViewport="true"
+        android:scrollbars="none"
+        android:layout_marginTop="12dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingStart="20dp"
+            android:paddingEnd="20dp"
+            android:paddingBottom="32dp">
+
+            <!-- Nombre centrado -->
+            <TextView
+                android:id="@+id/perfil_nombre"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                android:textColor="#1C1C1C"
+                android:gravity="center"
+                android:layout_marginBottom="4dp"/>
+
+            <TextView
+                android:id="@+id/perfil_tipo_turno"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="13sp"
+                android:textColor="#AAAAAA"
+                android:gravity="center"
+                android:layout_marginBottom="28dp"/>
+
+            <!-- ── SECCIÓN: INFORMACIÓN ─────────────────────────────── -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="INFORMACIÓN"
+                android:textSize="10sp"
+                android:textStyle="bold"
+                android:textColor="#AAAAAA"
+                android:letterSpacing="0.1"
+                android:layout_marginBottom="8dp"
+                android:layout_marginStart="4dp"/>
+
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="20dp"
+                app:cardCornerRadius="18dp"
+                app:cardElevation="0dp"
+                app:cardBackgroundColor="#FEFCF8">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="4dp">
+
+                    <!-- Nombre -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical"
+                        android:paddingStart="16dp"
+                        android:paddingEnd="16dp"
+                        android:paddingTop="10dp"
+                        android:paddingBottom="10dp">
+
+                        <ImageView
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            android:src="@android:drawable/ic_menu_edit"
+                            android:layout_marginEnd="14dp"
+                            app:tint="#AAAAAA"
+                            android:contentDescription="Nombre"/>
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Nombre completo"
+                                android:textSize="10sp"
+                                android:textColor="#AAAAAA"/>
+
+                            <TextView
+                                android:id="@+id/perfil_nombre_label"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:textSize="14sp"
+                                android:textColor="#1C1C1C"
+                                android:layout_marginTop="2dp"/>
+
+                            <com.google.android.material.textfield.TextInputEditText
+                                android:id="@+id/perfil_nombre_edit"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:textSize="14sp"
+                                android:textColor="#1C1C1C"
+                                android:inputType="textPersonName|textCapWords"
+                                android:background="@null"
+                                android:paddingTop="2dp"
+                                android:paddingBottom="4dp"
+                                android:visibility="gone"
+                                android:hint="Nombre completo"/>
+                        </LinearLayout>
+                    </LinearLayout>
+
+                    <View android:layout_width="match_parent" android:layout_height="1dp"
+                        android:background="#F0EBE3" android:layout_marginStart="50dp"/>
+
+                    <!-- Email -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical"
+                        android:paddingStart="16dp"
+                        android:paddingEnd="16dp"
+                        android:paddingTop="10dp"
+                        android:paddingBottom="10dp">
+
+                        <ImageView
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            android:src="@android:drawable/ic_dialog_email"
+                            android:layout_marginEnd="14dp"
+                            app:tint="#AAAAAA"
+                            android:contentDescription="Email"/>
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Correo institucional"
+                                android:textSize="10sp"
+                                android:textColor="#AAAAAA"/>
+
+                            <TextView
+                                android:id="@+id/perfil_email"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:textSize="14sp"
+                                android:textColor="#888888"
+                                android:layout_marginTop="2dp"/>
+
+                            <TextView
+                                android:id="@+id/perfil_email_nota"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="El correo no puede modificarse"
+                                android:textSize="10sp"
+                                android:textColor="#CCCCCC"
+                                android:visibility="gone"/>
+                        </LinearLayout>
+                    </LinearLayout>
+
+                    <View android:layout_width="match_parent" android:layout_height="1dp"
+                        android:background="#F0EBE3" android:layout_marginStart="50dp"/>
+
+                    <!-- No. Empleado -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical"
+                        android:paddingStart="16dp"
+                        android:paddingEnd="16dp"
+                        android:paddingTop="10dp"
+                        android:paddingBottom="10dp">
+
+                        <ImageView
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            android:src="@android:drawable/ic_menu_info_details"
+                            android:layout_marginEnd="14dp"
+                            app:tint="#AAAAAA"
+                            android:contentDescription="Empleado"/>
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="No. Empleado"
+                                android:textSize="10sp"
+                                android:textColor="#AAAAAA"/>
+
+                            <TextView
+                                android:id="@+id/perfil_numero_empleado"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:textSize="14sp"
+                                android:textColor="#1C1C1C"
+                                android:layout_marginTop="2dp"/>
+
+                            <com.google.android.material.textfield.TextInputEditText
+                                android:id="@+id/perfil_numero_empleado_edit"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:textSize="14sp"
+                                android:textColor="#1C1C1C"
+                                android:inputType="number"
+                                android:background="@null"
+                                android:paddingTop="2dp"
+                                android:paddingBottom="4dp"
+                                android:visibility="gone"
+                                android:hint="Número de empleado"/>
+                        </LinearLayout>
+                    </LinearLayout>
+
+                    <View android:layout_width="match_parent" android:layout_height="1dp"
+                        android:background="#F0EBE3" android:layout_marginStart="50dp"/>
+
+                    <!-- Teléfono -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical"
+                        android:paddingStart="16dp"
+                        android:paddingEnd="16dp"
+                        android:paddingTop="10dp"
+                        android:paddingBottom="10dp">
+
+                        <ImageView
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            android:src="@android:drawable/stat_sys_phone_call"
+                            android:layout_marginEnd="14dp"
+                            app:tint="#AAAAAA"
+                            android:contentDescription="Teléfono"/>
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Teléfono"
+                                android:textSize="10sp"
+                                android:textColor="#AAAAAA"/>
+
+                            <TextView
+                                android:id="@+id/perfil_telefono"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:textSize="14sp"
+                                android:textColor="#1C1C1C"
+                                android:layout_marginTop="2dp"/>
+
+                            <com.google.android.material.textfield.TextInputEditText
+                                android:id="@+id/perfil_telefono_edit"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:textSize="14sp"
+                                android:textColor="#1C1C1C"
+                                android:inputType="phone"
+                                android:background="@null"
+                                android:paddingTop="2dp"
+                                android:paddingBottom="4dp"
+                                android:visibility="gone"
+                                android:hint="Teléfono de contacto"/>
+                        </LinearLayout>
+                    </LinearLayout>
+
+                    <View android:layout_width="match_parent" android:layout_height="1dp"
+                        android:background="#F0EBE3" android:layout_marginStart="50dp"/>
+
+                    <!-- CAMBIO 4: Tipo y Turno como filas separadas con Spinner
+                         para que funcionen correctamente como dropdowns -->
+                    <!-- Tipo de Profesor -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical"
+                        android:paddingStart="16dp"
+                        android:paddingEnd="16dp"
+                        android:paddingTop="10dp"
+                        android:paddingBottom="10dp">
+
+                        <ImageView
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            android:src="@android:drawable/ic_menu_today"
+                            android:layout_marginEnd="14dp"
+                            app:tint="#AAAAAA"
+                            android:contentDescription="Tipo"/>
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Tipo de profesor"
+                                android:textSize="10sp"
+                                android:textColor="#AAAAAA"/>
+
+                            <!-- VISTA -->
+                            <TextView
+                                android:id="@+id/perfil_tipo_detalle"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:textSize="14sp"
+                                android:textColor="#1C1C1C"
+                                android:layout_marginTop="2dp"/>
+
+                            <!-- EDICIÓN: Spinner nativo — funciona siempre -->
+                            <Spinner
+                                android:id="@+id/perfil_tipo_spinner"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:visibility="gone"
+                                android:background="@null"
+                                android:paddingTop="2dp"
+                                android:paddingBottom="4dp"/>
+                        </LinearLayout>
+                    </LinearLayout>
+
+                    <View android:layout_width="match_parent" android:layout_height="1dp"
+                        android:background="#F0EBE3" android:layout_marginStart="50dp"/>
+
+                    <!-- Turno -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical"
+                        android:paddingStart="16dp"
+                        android:paddingEnd="16dp"
+                        android:paddingTop="10dp"
+                        android:paddingBottom="10dp">
+
+                        <ImageView
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            android:src="@android:drawable/ic_menu_recent_history"
+                            android:layout_marginEnd="14dp"
+                            app:tint="#AAAAAA"
+                            android:contentDescription="Turno"/>
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Turno"
+                                android:textSize="10sp"
+                                android:textColor="#AAAAAA"/>
+
+                            <!-- VISTA -->
+                            <TextView
+                                android:id="@+id/perfil_turno_detalle"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:textSize="14sp"
+                                android:textColor="#1C1C1C"
+                                android:layout_marginTop="2dp"/>
+
+                            <!-- EDICIÓN: Spinner nativo -->
+                            <Spinner
+                                android:id="@+id/perfil_turno_spinner"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:visibility="gone"
+                                android:background="@null"
+                                android:paddingTop="2dp"
+                                android:paddingBottom="4dp"/>
+                        </LinearLayout>
+                    </LinearLayout>
+
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+
+            <!-- ── SECCIÓN: SEGURIDAD ───────────────────────────────── -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="SEGURIDAD"
+                android:textSize="10sp"
+                android:textStyle="bold"
+                android:textColor="#AAAAAA"
+                android:letterSpacing="0.1"
+                android:layout_marginBottom="8dp"
+                android:layout_marginStart="4dp"/>
+
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="20dp"
+                app:cardCornerRadius="18dp"
+                app:cardElevation="0dp"
+                app:cardBackgroundColor="#FEFCF8">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="4dp">
+
+                    <!-- Cambiar PIN -->
+                    <LinearLayout
+                        android:id="@+id/btn_cambiar_pin"
+                        android:layout_width="match_parent"
+                        android:layout_height="56dp"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical"
+                        android:paddingStart="16dp"
+                        android:paddingEnd="16dp"
+                        android:background="?attr/selectableItemBackground"
+                        android:clickable="true"
+                        android:focusable="true">
+
+                        <ImageView
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            android:src="@android:drawable/ic_lock_lock"
+                            android:layout_marginEnd="14dp"
+                            app:tint="@color/green_primary"
+                            android:contentDescription="PIN"/>
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="Cambiar PIN de acceso"
+                            android:textSize="14sp"
+                            android:textColor="#1C1C1C"/>
+
+                        <ImageView
+                            android:layout_width="16dp"
+                            android:layout_height="16dp"
+                            android:src="@android:drawable/arrow_up_float"
+                            android:rotation="90"
+                            app:tint="#CCCCCC"
+                            android:contentDescription="Ir"/>
+                    </LinearLayout>
+
+                    <View android:layout_width="match_parent" android:layout_height="1dp"
+                        android:background="#F0EBE3" android:layout_marginStart="50dp"/>
+
+                    <!-- Cambiar Contraseña -->
+                    <LinearLayout
+                        android:id="@+id/btn_cambiar_password"
+                        android:layout_width="match_parent"
+                        android:layout_height="56dp"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical"
+                        android:paddingStart="16dp"
+                        android:paddingEnd="16dp"
+                        android:background="?attr/selectableItemBackground"
+                        android:clickable="true"
+                        android:focusable="true">
+
+                        <ImageView
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            android:src="@android:drawable/ic_lock_idle_lock"
+                            android:layout_marginEnd="14dp"
+                            app:tint="@color/green_primary"
+                            android:contentDescription="Contraseña"/>
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="Cambiar contraseña"
+                            android:textSize="14sp"
+                            android:textColor="#1C1C1C"/>
+
+                        <ImageView
+                            android:layout_width="16dp"
+                            android:layout_height="16dp"
+                            android:src="@android:drawable/arrow_up_float"
+                            android:rotation="90"
+                            app:tint="#CCCCCC"
+                            android:contentDescription="Ir"/>
+                    </LinearLayout>
+
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+
+            <!-- ── SECCIÓN: CUENTA ──────────────────────────────────── -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="CUENTA"
+                android:textSize="10sp"
+                android:textStyle="bold"
+                android:textColor="#AAAAAA"
+                android:letterSpacing="0.1"
+                android:layout_marginBottom="8dp"
+                android:layout_marginStart="4dp"/>
+
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="32dp"
+                app:cardCornerRadius="18dp"
+                app:cardElevation="0dp"
+                app:cardBackgroundColor="#FEFCF8">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="4dp">
+
+                    <!-- Bloquear con PIN -->
+                    <LinearLayout
+                        android:id="@+id/btn_bloquear_pin"
+                        android:layout_width="match_parent"
+                        android:layout_height="56dp"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical"
+                        android:paddingStart="16dp"
+                        android:paddingEnd="16dp"
+                        android:background="?attr/selectableItemBackground"
+                        android:clickable="true"
+                        android:focusable="true">
+
+                        <ImageView
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            android:src="@android:drawable/ic_lock_idle_alarm"
+                            android:layout_marginEnd="14dp"
+                            app:tint="#888888"
+                            android:contentDescription="Bloquear"/>
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="Bloquear app (usar PIN)"
+                            android:textSize="14sp"
+                            android:textColor="#1C1C1C"/>
+
+                        <ImageView
+                            android:layout_width="16dp"
+                            android:layout_height="16dp"
+                            android:src="@android:drawable/arrow_up_float"
+                            android:rotation="90"
+                            app:tint="#CCCCCC"
+                            android:contentDescription="Ir"/>
+                    </LinearLayout>
+
+                    <View android:layout_width="match_parent" android:layout_height="1dp"
+                        android:background="#F0EBE3" android:layout_marginStart="50dp"/>
+
+                    <!-- Cerrar sesión -->
+                    <LinearLayout
+                        android:id="@+id/btn_cerrar_sesion_perfil"
+                        android:layout_width="match_parent"
+                        android:layout_height="56dp"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical"
+                        android:paddingStart="16dp"
+                        android:paddingEnd="16dp"
+                        android:background="?attr/selectableItemBackground"
+                        android:clickable="true"
+                        android:focusable="true">
+
+                        <ImageView
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            android:src="@android:drawable/ic_menu_close_clear_cancel"
+                            android:layout_marginEnd="14dp"
+                            app:tint="@color/error"
+                            android:contentDescription="Cerrar sesión"/>
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="Cerrar sesión"
+                            android:textSize="14sp"
+                            android:textColor="@color/error"/>
+                    </LinearLayout>
+
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="AsisteDragon v1.0 • UTFV"
+                android:textSize="11sp"
+                android:textColor="#CCCCCC"
+                android:gravity="center"
+                android:layout_marginBottom="8dp"/>
+
+        </LinearLayout>
+    </ScrollView>
+
+    <!-- ── BOTTOM NAV ─────────────────────────────────────────────────── -->
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/bottom_navigation"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:background="#FEFCF8"
+        android:elevation="8dp"
+        app:itemIconTint="@color/bottom_nav_color"
+        app:itemTextColor="@color/bottom_nav_color"
+        app:labelVisibilityMode="labeled"
+        app:menu="@menu/bottom_navigation_menu"/>
+
+</RelativeLayout>

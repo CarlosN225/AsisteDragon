@@ -1,0 +1,31 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <!-- Base application theme. -->
+    <style name="Base.Theme.AsisteDragon" parent="Theme.Material3.DayNight.NoActionBar">
+        <!-- Customize your light theme here. -->
+        <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
+    </style>
+
+    <!-- Estilo para botones del teclado numérico del PIN -->
+    <style name="EstiloBotonNumericoPIN">
+        <item name="android:layout_width">75dp</item>
+        <item name="android:layout_height">75dp</item>
+        <item name="android:layout_margin">6dp</item>
+        <item name="android:textSize">26sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">#05701B</item>
+        <item name="android:background">@drawable/boton_numerico_pin</item>
+    </style>
+
+    <!-- Estilo para botón borrar -->
+    <style name="EstiloBotonBorrarPIN">
+        <item name="android:layout_width">160dp</item>
+        <item name="android:layout_height">75dp</item>
+        <item name="android:layout_margin">6dp</item>
+        <item name="android:textSize">26sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">#05701B</item>
+        <item name="android:background">@drawable/boton_numerico_pin</item>
+        <item name="android:layout_columnSpan">2</item>
+    </style>
+    <style name="Theme.AsisteDragon" parent="Base.Theme.AsisteDragon" />
+</resources>

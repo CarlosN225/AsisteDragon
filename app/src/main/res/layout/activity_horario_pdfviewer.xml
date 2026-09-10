@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="#F5F0EA">
+
+    <!-- ── TOOLBAR ─────────────────────────────────────────────────── -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="52dp"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:paddingStart="8dp"
+        android:paddingEnd="16dp"
+        android:background="@color/green_primary">
+
+        <ImageView
+            android:id="@+id/bs_btn_volver"
+            android:layout_width="44dp"
+            android:layout_height="44dp"
+            android:src="@android:drawable/ic_media_previous"
+            android:tint="#FFFFFF"
+            android:padding="10dp"/>
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Revisar Horario"
+            android:textColor="#FFFFFF"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:paddingStart="4dp"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="2x toque · pellizca"
+            android:textColor="#99FFFFFF"
+            android:textSize="10sp"/>
+    </LinearLayout>
+
+    <!-- ── PDF IMAGE — ocupa el 58% superior ─────────────────────── -->
+    <ImageView
+        android:id="@+id/img_pdf_preview"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:background="#F5F0EA"
+        android:scaleType="matrix"
+        android:contentDescription="Vista previa del horario"/>
+
+    <!-- ── PANEL INFERIOR FIJO — 42% de pantalla ─────────────────── -->
+    <LinearLayout
+        android:id="@+id/bottom_sheet"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="0.72"
+        android:orientation="vertical"
+        android:background="#FEFCF8"
+        android:elevation="8dp">
+
+        <!-- Divisor superior -->
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:background="#EDE8DF"/>
+
+        <!-- Header -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:paddingStart="16dp"
+            android:paddingEnd="10dp"
+            android:paddingTop="10dp"
+            android:paddingBottom="8dp"
+            android:background="#FEFCF8">
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Materias Detectadas"
+                    android:textSize="14sp"
+                    android:textStyle="bold"
+                    android:textColor="#1A1A1A"/>
+
+                <TextView
+                    android:id="@+id/bs_txt_conteo"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="cargando..."
+                    android:textSize="11sp"
+                    android:textColor="@color/green_primary"/>
+            </LinearLayout>
+
+            <Button
+                android:id="@+id/bs_btn_agregar"
+                style="?attr/materialButtonOutlinedStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="36dp"
+                android:text="Agregar"
+                android:textSize="11sp"
+                android:textColor="@color/green_primary"
+                android:backgroundTint="#F0EBE2"
+                android:paddingStart="14dp"
+                android:paddingEnd="14dp"
+                app:cornerRadius="10dp"
+                app:strokeColor="@color/green_primary"
+                app:strokeWidth="1dp"/>
+
+            <Button
+                android:id="@+id/bs_btn_confirmar"
+                android:layout_width="wrap_content"
+                android:layout_height="36dp"
+                android:text="Confirmar"
+                android:textSize="11sp"
+                android:textColor="#FFFFFF"
+                android:backgroundTint="@color/green_primary"
+                android:layout_marginStart="6dp"
+                android:paddingStart="14dp"
+                android:paddingEnd="14dp"
+                app:cornerRadius="10dp"
+                style="@style/Widget.MaterialComponents.Button"/>
+        </LinearLayout>
+
+        <!-- Divisor -->
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#EDE8DF"/>
+
+        <!-- Lista de materias con scroll -->
+        <ScrollView
+            android:id="@+id/bs_nested_scroll"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:overScrollMode="ifContentScrolls"
+            android:scrollbars="vertical"
+            android:fillViewport="false"
+            android:background="#FEFCF8">
+
+            <LinearLayout
+                android:id="@+id/bs_container_materias"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingStart="14dp"
+                android:paddingEnd="14dp"
+                android:paddingTop="10dp"
+                android:paddingBottom="24dp"/>
+
+        </ScrollView>
+
+    </LinearLayout>
+
+</LinearLayout>

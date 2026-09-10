@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#FFF5F0EA">
+
+    <!-- HEADER -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/green_primary"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:paddingStart="20dp"
+        android:paddingEnd="20dp"
+        android:paddingTop="20dp"
+        android:paddingBottom="20dp"
+        android:elevation="4dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                android:text="Lista"
+                android:textSize="22sp"
+                android:textColor="#FFFFFF"
+                android:textStyle="bold"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+
+            <TextView
+                android:text="Universidad Tecnológica Fidel Velázquez"
+                android:textSize="13sp"
+                android:textColor="#CCFFFFff"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"/>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <!-- CONTENIDO CENTRAL -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:layout_marginTop="76dp"
+        android:layout_marginBottom="58dp"
+        android:paddingStart="40dp"
+        android:paddingEnd="40dp">
+
+        <!-- Ícono -->
+        <android.widget.FrameLayout
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:layout_gravity="center_horizontal">
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:src="@android:drawable/ic_menu_agenda"
+                android:tint="@color/green_primary"
+                android:alpha="0.25"
+                android:scaleType="fitCenter"
+                android:padding="16dp"/>
+
+        </android.widget.FrameLayout>
+
+        <!-- Título -->
+        <TextView
+            android:text="Próximamente"
+            android:textSize="26sp"
+            android:textStyle="bold"
+            android:textColor="#FF1A1A1A"
+            android:gravity="center"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"/>
+
+        <!-- Subtítulo -->
+        <TextView
+            android:text="Lista de Alumnos"
+            android:textSize="16sp"
+            android:textColor="@color/green_primary"
+            android:textStyle="bold"
+            android:gravity="center"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"/>
+
+        <!-- Descripción -->
+        <TextView
+            android:text="Podrás registrar y gestionar la lista de alumnos por materia y grupo, pasar asistencia desde la app y llevar un control detallado de cada grupo."
+            android:textSize="14sp"
+            android:textColor="#FF888888"
+            android:gravity="center"
+            android:lineSpacingExtra="4dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"/>
+
+        <!-- Badge -->
+        <TextView
+            android:text="En desarrollo  🚧"
+            android:textSize="12sp"
+            android:textColor="#FF2E7D52"
+            android:textStyle="bold"
+            android:gravity="center"
+            android:paddingStart="24dp"
+            android:paddingEnd="24dp"
+            android:paddingTop="10dp"
+            android:paddingBottom="10dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:background="@drawable/badge_puntual"/>
+
+    </LinearLayout>
+
+    <!-- BOTTOM NAVIGATION -->
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/bottom_navigation"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:background="#FFFEFCF8"
+        app:menu="@menu/bottom_navigation_menu"
+        app:itemIconTint="@color/bottom_nav_color"
+        app:itemTextColor="@color/bottom_nav_color"
+        app:labelVisibilityMode="labeled"/>
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

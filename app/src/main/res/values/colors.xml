@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Colores principales de Asiste Dragón -->
+    <color name="green_primary">#2ecc71</color>
+    <color name="green_dark">#27ae60</color>
+    <color name="green_light">#a8e6cf</color>
+
+    <!-- Colores del sistema -->
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+    <color name="gray_light">#F5F5F5</color>
+    <color name="gray_medium">#999999</color>
+
+    <!-- Colores de estado -->
+    <color name="success">#10b981</color>
+    <color name="error">#ef4444</color>
+    <color name="warning">#f59e0b</color>
+</resources>

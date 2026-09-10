@@ -1,0 +1,237 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#FFF5F0EA">
+
+    <!-- ── HEADER ──────────────────────────────────────────────────── -->
+    <LinearLayout
+        android:id="@+id/header_reportes"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/green_primary"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:paddingStart="20dp"
+        android:paddingEnd="16dp"
+        android:paddingTop="20dp"
+        android:paddingBottom="20dp"
+        android:elevation="4dp">
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:text="Mis Reportes"
+                android:textSize="22sp"
+                android:textColor="#FFFFFF"
+                android:textStyle="bold"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+
+            <TextView
+                android:id="@+id/txt_mes_actual"
+                android:textSize="13sp"
+                android:textColor="#CCFFFFff"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"/>
+
+        </LinearLayout>
+
+        <ImageView
+            android:id="@+id/btn_compartir_reporte"
+            android:layout_width="44dp"
+            android:layout_height="44dp"
+            android:src="@android:drawable/ic_menu_share"
+            android:tint="#FFFFFF"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:padding="8dp"
+            android:contentDescription="Compartir reporte"/>
+
+    </LinearLayout>
+
+    <!-- ── CONTENIDO ───────────────────────────────────────────────── -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:layout_marginTop="76dp"
+        android:layout_marginBottom="58dp">
+
+        <!-- Loading -->
+        <LinearLayout
+            android:id="@+id/loading_reportes"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:visibility="visible">
+
+            <TextView
+                android:text="Cargando reportes..."
+                android:textSize="15sp"
+                android:textColor="#FFAAAAAA"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+
+        </LinearLayout>
+
+        <!-- Sin datos -->
+        <LinearLayout
+            android:id="@+id/layout_sin_datos"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:visibility="gone">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="📋"
+                android:textSize="48sp" />
+
+            <TextView
+                android:id="@+id/txt_sin_datos"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:gravity="center"
+                android:text="Sin registros este mes"
+                android:textColor="#FF888888"
+                android:textSize="16sp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                android:gravity="center"
+                android:paddingStart="40dp"
+                android:paddingEnd="40dp"
+                android:text="Registra tu asistencia para ver tus reportes"
+                android:textColor="#FFAAAAAA"
+                android:textSize="13sp" />
+
+        </LinearLayout>
+
+        <!-- ScrollView principal -->
+        <ScrollView
+            android:id="@+id/scroll_reportes"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:overScrollMode="never"
+            android:visibility="gone">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingBottom="40dp">
+
+                <!-- ── SECCIÓN 1: RESUMEN DEL MES ────────────────── -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="20dp"
+                    android:layout_marginTop="30dp"
+                    android:layout_marginBottom="10dp"
+                    android:letterSpacing="0.12"
+                    android:text="RESUMEN DEL MES"
+                    android:textColor="#FF999999"
+                    android:textSize="10sp"
+                    android:textStyle="bold" />
+
+                <LinearLayout
+                    android:id="@+id/contenedor_tarjetas"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:paddingStart="16dp"
+                    android:paddingEnd="16dp" />
+
+                <!-- ── SECCIÓN 2: POR MATERIA ─────────────────────── -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="20dp"
+                    android:layout_marginTop="24dp"
+                    android:layout_marginBottom="10dp"
+                    android:letterSpacing="0.12"
+                    android:text="POR MATERIA"
+                    android:textColor="#FF999999"
+                    android:textSize="10sp"
+                    android:textStyle="bold" />
+
+                <androidx.cardview.widget.CardView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginEnd="16dp"
+                    app:cardBackgroundColor="#FFFEFCF8"
+                    app:cardCornerRadius="18dp"
+                    app:cardElevation="0dp">
+
+                    <LinearLayout
+                        android:id="@+id/contenedor_materias"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical" />
+
+                </androidx.cardview.widget.CardView>
+
+                <!-- ── SECCIÓN 3: HISTORIAL ───────────────────────── -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="20dp"
+                    android:layout_marginTop="24dp"
+                    android:layout_marginBottom="10dp"
+                    android:letterSpacing="0.12"
+                    android:text="HISTORIAL DE CLASES"
+                    android:textColor="#FF999999"
+                    android:textSize="10sp"
+                    android:textStyle="bold" />
+
+                <androidx.cardview.widget.CardView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="20dp"
+                    android:layout_marginEnd="20dp"
+                    app:cardBackgroundColor="#FFFEFCF8"
+                    app:cardCornerRadius="18dp"
+                    app:cardElevation="5dp">
+
+                    <LinearLayout
+                        android:id="@+id/contenedor_historial"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical" />
+
+                </androidx.cardview.widget.CardView>
+
+            </LinearLayout>
+        </ScrollView>
+
+    </LinearLayout>
+
+    <!-- ── BOTTOM NAVIGATION ───────────────────────────────────────── -->
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/bottom_navigation"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:background="#FFFEFCF8"
+        app:menu="@menu/bottom_navigation_menu"
+        app:itemIconTint="@color/bottom_nav_color"
+        app:itemTextColor="@color/bottom_nav_color"
+        app:labelVisibilityMode="labeled"/>
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

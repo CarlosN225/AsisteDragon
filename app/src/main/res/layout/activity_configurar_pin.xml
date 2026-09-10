@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/fondo_degradado_login"
+    android:fillViewport="true">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <!-- Espaciador Superior -->
+        <View
+            android:id="@+id/espaciador_superior"
+            android:layout_width="match_parent"
+            android:layout_height="25dp"
+            android:layout_alignParentTop="true" />
+
+        <!-- Tarjeta Blanca con Contenido -->
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/espaciador_superior"
+            android:layout_marginHorizontal="20dp"
+            android:layout_marginBottom="20dp"
+            app:cardCornerRadius="15dp"
+            app:cardElevation="8dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="24dp"
+                android:gravity="center">
+
+                <!-- Logo (SIN mostrar - solo título) -->
+
+                <!-- Título -->
+                <TextView
+                    android:id="@+id/texto_titulo"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Configurar PIN"
+                    android:textSize="28sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/green_primary"
+                    android:layout_marginTop="16dp"
+                    android:layout_marginBottom="8dp"/>
+
+                <!-- Subtítulo / Instrucción -->
+                <TextView
+                    android:id="@+id/texto_instruccion"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Cree un PIN de 4 dígitos"
+                    android:textSize="15sp"
+                    android:textColor="@color/gray_medium"
+                    android:gravity="center"
+                    android:layout_marginBottom="24dp"/>
+
+                <!-- Indicadores de Progreso -->
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginBottom="32dp">
+
+                    <View
+                        android:id="@+id/indicador_paso1"
+                        android:layout_width="12dp"
+                        android:layout_height="12dp"
+                        android:layout_margin="4dp"
+                        android:background="@drawable/indicador_activo"/>
+
+                    <View
+                        android:id="@+id/indicador_paso2"
+                        android:layout_width="12dp"
+                        android:layout_height="12dp"
+                        android:layout_margin="4dp"
+                        android:background="@drawable/indicador_inactivo"/>
+
+                </LinearLayout>
+
+                <!-- Puntos del PIN (4 puntos fijos) -->
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginBottom="48dp">
+
+                    <View
+                        android:id="@+id/punto_1"
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:layout_margin="12dp"
+                        android:background="@drawable/punto_pin_vacio"/>
+
+                    <View
+                        android:id="@+id/punto_2"
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:layout_margin="12dp"
+                        android:background="@drawable/punto_pin_vacio"/>
+
+                    <View
+                        android:id="@+id/punto_3"
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:layout_margin="12dp"
+                        android:background="@drawable/punto_pin_vacio"/>
+
+                    <View
+                        android:id="@+id/punto_4"
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:layout_margin="12dp"
+                        android:background="@drawable/punto_pin_vacio"/>
+
+                </LinearLayout>
+
+                <!-- Teclado Numérico -->
+                <GridLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:columnCount="3"
+                    android:rowCount="4"
+                    android:layout_marginBottom="16dp">
+
+                    <!-- Fila 1: 1, 2, 3 -->
+                    <Button
+                        android:id="@+id/boton_1"
+                        style="@style/EstiloBotonNumericoPIN"
+                        android:background="@drawable/boton_numerico_pin"
+                        android:text="1" />
+
+                    <Button
+                        android:id="@+id/boton_2"
+                        style="@style/EstiloBotonNumericoPIN"
+                        android:text="2"/>
+
+                    <Button
+                        android:id="@+id/boton_3"
+                        style="@style/EstiloBotonNumericoPIN"
+                        android:text="3"/>
+
+                    <!-- Fila 2: 4, 5, 6 -->
+                    <Button
+                        android:id="@+id/boton_4"
+                        style="@style/EstiloBotonNumericoPIN"
+                        android:text="4"/>
+
+                    <Button
+                        android:id="@+id/boton_5"
+                        style="@style/EstiloBotonNumericoPIN"
+                        android:text="5"/>
+
+                    <Button
+                        android:id="@+id/boton_6"
+                        style="@style/EstiloBotonNumericoPIN"
+                        android:text="6"/>
+
+                    <!-- Fila 3: 7, 8, 9 -->
+                    <Button
+                        android:id="@+id/boton_7"
+                        style="@style/EstiloBotonNumericoPIN"
+                        android:text="7"/>
+
+                    <Button
+                        android:id="@+id/boton_8"
+                        style="@style/EstiloBotonNumericoPIN"
+                        android:text="8"/>
+
+                    <Button
+                        android:id="@+id/boton_9"
+                        style="@style/EstiloBotonNumericoPIN"
+                        android:text="9"/>
+
+                    <!-- Fila 4: 0 a la izquierda, Borrar ocupa 2 espacios -->
+                    <Button
+                        android:id="@+id/boton_0"
+                        style="@style/EstiloBotonNumericoPIN"
+                        android:text="0"/>
+
+                    <Button
+                        android:id="@+id/boton_borrar"
+                        style="@style/EstiloBotonBorrarPIN"
+                        android:background="@drawable/boton_numerico_pin"
+                        android:text="⌫" />
+
+                </GridLayout>
+
+            </LinearLayout>
+
+        </androidx.cardview.widget.CardView>
+
+    </RelativeLayout>
+
+</ScrollView>

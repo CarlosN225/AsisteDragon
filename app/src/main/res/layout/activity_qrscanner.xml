@@ -1,0 +1,263 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/black">
+
+    <!-- Vista de la Cámara -->
+    <androidx.camera.view.PreviewView
+        android:id="@+id/preview_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
+
+    <!-- Overlay Semi-transparente -->
+    <View
+        android:id="@+id/overlay_scanner"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#80000000"/>
+
+    <!-- Marco de Escaneo -->
+    <FrameLayout
+        android:id="@+id/frame_scanner"
+        android:layout_width="280dp"
+        android:layout_height="280dp"
+        android:layout_centerInParent="true">
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@drawable/qr_scan_frame"/>
+    </FrameLayout>
+
+    <!-- Header -->
+    <LinearLayout
+        android:id="@+id/header_scanner"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:orientation="vertical"
+        android:padding="24dp"
+        android:gravity="center">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Escanear Código QR"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            android:textColor="@color/white"
+            android:layout_marginBottom="8dp"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Coloque el código QR dentro del marco"
+            android:textSize="14sp"
+            android:textColor="@color/white"
+            android:alpha="0.9"
+            android:gravity="center"/>
+    </LinearLayout>
+
+    <!-- Footer con Estado -->
+    <LinearLayout
+        android:id="@+id/footer_scanner"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:orientation="vertical"
+        android:padding="24dp"
+        android:gravity="center">
+
+        <TextView
+            android:id="@+id/texto_estado"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Buscando código QR..."
+            android:textSize="16sp"
+            android:textColor="@color/white"
+            android:textStyle="bold"
+            android:layout_marginBottom="16dp"/>
+
+        <Button
+            android:id="@+id/boton_cancelar"
+            android:layout_width="wrap_content"
+            android:layout_height="48dp"
+            android:text="Cancelar"
+            android:textSize="16sp"
+            android:backgroundTint="#40FFFFFF"
+            android:textColor="@color/white"
+            android:paddingHorizontal="32dp"/>
+    </LinearLayout>
+
+    <!-- ══════════════════════════════════════════════════════
+         PANTALLA DE ÉXITO
+    ══════════════════════════════════════════════════ -->
+    <RelativeLayout
+        android:id="@+id/pantalla_exito"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/white"
+        android:visibility="gone">
+
+        <!-- Contenido centrado -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:padding="40dp">
+
+            <!-- Ícono éxito -->
+            <RelativeLayout
+                android:layout_width="140dp"
+                android:layout_height="140dp"
+                android:layout_marginBottom="32dp">
+
+                <View
+                    android:id="@+id/circulo_exito_fondo"
+                    android:layout_width="140dp"
+                    android:layout_height="140dp"
+                    android:background="@drawable/circulo_exito_fondo"/>
+
+                <ImageView
+                    android:id="@+id/icono_check_exito"
+                    android:layout_width="80dp"
+                    android:layout_height="80dp"
+                    android:layout_centerInParent="true"
+                    android:src="@drawable/ic_check_blanco"
+                    android:contentDescription="Éxito"
+                    app:tint="@color/white"/>
+            </RelativeLayout>
+
+            <!-- Título -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Asistencia Registrada"
+                android:textSize="28sp"
+                android:textStyle="bold"
+                android:textColor="@color/black"
+                android:gravity="center"
+                android:layout_marginBottom="8dp"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Tu asistencia ha sido registrada exitosamente"
+                android:textSize="14sp"
+                android:textColor="@color/gray_medium"
+                android:gravity="center"
+                android:layout_marginBottom="32dp"/>
+
+            <!-- Card info -->
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="20dp"
+                app:cardCornerRadius="15dp"
+                app:cardElevation="4dp"
+                android:layout_marginBottom="24dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="24dp">
+
+                    <!-- Hora -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical"
+                        android:layout_marginBottom="16dp">
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="Hora de Registro"
+                            android:textSize="13sp"
+                            android:textColor="@color/gray_medium"/>
+
+                        <TextView
+                            android:id="@+id/texto_hora_exito"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="08:45:32"
+                            android:textSize="20sp"
+                            android:textStyle="bold"
+                            android:textColor="@color/black"/>
+                    </LinearLayout>
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:background="#E0E0E0"
+                        android:layout_marginBottom="16dp"/>
+
+                    <!-- Estado -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical">
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="Estado"
+                            android:textSize="13sp"
+                            android:textColor="@color/gray_medium"/>
+
+                        <TextView
+                            android:id="@+id/texto_estado_exito"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="PUNTUAL"
+                            android:textSize="13sp"
+                            android:textStyle="bold"
+                            android:textColor="@color/success"
+                            android:background="@drawable/badge_puntual"
+                            android:paddingHorizontal="16dp"
+                            android:paddingVertical="8dp"/>
+                    </LinearLayout>
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+        </LinearLayout>
+
+        <!-- ── Cuenta regresiva ──────────────────────────────── -->
+        <TextView
+            android:id="@+id/texto_cuenta_regresiva"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_above="@+id/boton_continuar"
+            android:layout_marginBottom="10dp"
+            android:text="Cerrando en 5..."
+            android:textSize="13sp"
+            android:textColor="#AAAAAA"
+            android:gravity="center"/>
+
+        <!-- ── Botón Continuar — oculto, auto-cierre lo reemplaza ── -->
+        <Button
+            android:id="@+id/boton_continuar"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:layout_alignParentBottom="true"
+            android:layout_marginHorizontal="24dp"
+            android:layout_marginBottom="40dp"
+            android:text="Continuar"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:backgroundTint="@color/green_primary"
+            android:textColor="@color/white"
+            android:visibility="gone"/>
+
+    </RelativeLayout>
+</RelativeLayout>

@@ -1,0 +1,227 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/fondo_degradado_login"
+    android:fillViewport="true">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <!-- Espaciador Superior -->
+        <View
+            android:id="@+id/espaciador_superior"
+            android:layout_width="match_parent"
+            android:layout_height="25dp"
+            android:layout_alignParentTop="true" />
+
+        <!-- Tarjeta de Login -->
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/espaciador_superior"
+            android:layout_marginHorizontal="24dp"
+            android:layout_marginBottom="24dp"
+            app:cardCornerRadius="15dp"
+            app:cardElevation="8dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="32dp">
+
+                <!-- Logo dentro del contenedor blanco -->
+                <ImageView
+                    android:layout_width="140dp"
+                    android:layout_height="140dp"
+                    android:layout_gravity="center"
+                    android:src="@drawable/logo_dragon"
+                    android:contentDescription="Logo Asiste Dragón"
+                    android:layout_marginBottom="16dp"/>
+
+                <!-- Nombre de la App -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:text="Asiste Dragón"
+                    android:textSize="28sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/green_primary"
+                    android:layout_marginBottom="4dp"/>
+
+                <!-- Subtítulo Institucional -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:text="Universidad Tecnológica Fidel Velázquez"
+                    android:textSize="13sp"
+                    android:textColor="@color/gray_medium"
+                    android:gravity="center"
+                    android:layout_marginBottom="32dp"/>
+
+                <!-- Título del Formulario -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Iniciar Sesión"
+                    android:textSize="22sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/green_primary"
+                    android:layout_marginBottom="8dp"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Bienvenido, ingrese sus credenciales"
+                    android:textSize="14sp"
+                    android:textColor="@color/gray_medium"
+                    android:layout_marginBottom="24dp"/>
+
+                <!-- Campo de Correo -->
+                <com.google.android.material.textfield.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Correo Institucional"
+                    android:layout_marginBottom="16dp"
+                    app:startIconDrawable="@android:drawable/ic_dialog_email"
+                    app:startIconTint="@color/green_primary"
+                    app:hintTextColor="@color/green_primary"
+                    app:boxStrokeColor="@color/green_primary"
+                    app:boxStrokeWidthFocused="2dp"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/campo_correo"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="textEmailAddress"
+                        android:textSize="16sp"
+                        android:paddingStart="12dp"/>
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <!-- Campo de Contraseña con Ojito -->
+                <com.google.android.material.textfield.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Contraseña"
+                    android:layout_marginBottom="8dp"
+                    app:startIconDrawable="@android:drawable/ic_lock_idle_lock"
+                    app:startIconTint="@color/green_primary"
+                    app:hintTextColor="@color/green_primary"
+                    app:boxStrokeColor="@color/green_primary"
+                    app:boxStrokeWidthFocused="2dp"
+                    app:endIconMode="password_toggle"
+                    app:endIconTint="@color/green_primary"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/campo_contrasena"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="textPassword"
+                        android:textSize="16sp"
+                        android:paddingStart="12dp"/>
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <!-- ¿Olvidaste tu contraseña? -->
+                <TextView
+                    android:id="@+id/txt_forgot_password"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="end"
+                    android:layout_marginTop="16dp"
+                    android:text="¿Olvidó su contraseña?"
+                    android:textColor="@color/green_primary"
+                    android:textSize="14sp"
+                    android:textStyle="bold" />
+
+                <!-- Opción de usar PIN -->
+                <LinearLayout
+                    android:id="@+id/boton_usar_pin"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center"
+                    android:padding="16dp"
+                    android:background="@drawable/info_box_background"
+                    android:layout_marginTop="16dp"
+                    android:layout_marginBottom="24dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="🔢"
+                        android:textSize="20sp"
+                        android:layout_marginEnd="12dp"/>
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Iniciar sesión con PIN"
+                        android:textSize="15sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/green_dark"/>
+
+                </LinearLayout>
+
+
+                <!-- Botón de Iniciar Sesión -->
+                <Button
+                    android:id="@+id/boton_iniciar_sesion"
+                    android:layout_width="match_parent"
+                    android:layout_height="56dp"
+                    android:text="INICIAR SESIÓN"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:backgroundTint="@color/green_primary"
+                    android:textColor="@color/white"
+                    app:cornerRadius="12dp"
+                    android:elevation="4dp"/>
+
+                <!-- Divisor -->
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@color/gray_light"
+                    android:layout_marginVertical="24dp"/>
+
+                <!-- Link a Registro -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="¿No tiene una cuenta? "
+                        android:textSize="15sp"
+                        android:textColor="@color/gray_medium"/>
+
+                    <TextView
+                        android:id="@+id/texto_ir_registro"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Registrarse"
+                        android:textSize="15sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/green_primary"
+                        android:padding="4dp"/>
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+        </androidx.cardview.widget.CardView>
+
+    </RelativeLayout>
+
+</ScrollView>

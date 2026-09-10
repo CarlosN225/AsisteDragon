@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- Fondo transparente en el centro -->
+    <item>
+        <shape android:shape="rectangle">
+            <solid android:color="#00000000"/>
+        </shape>
+    </item>
+
+    <!-- Esquinas del marco -->
+    <item>
+        <shape android:shape="rectangle">
+            <stroke
+                android:width="4dp"
+                android:color="@color/white"/>
+            <corners android:radius="12dp"/>
+        </shape>
+    </item>
+
+</layer-list>

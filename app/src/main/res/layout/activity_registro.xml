@@ -1,0 +1,328 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/fondo_degradado_login"
+    android:fillViewport="true">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <!-- Espaciador Superior -->
+        <View
+            android:id="@+id/espaciador_superior"
+            android:layout_width="match_parent"
+            android:layout_height="25dp"
+            android:layout_alignParentTop="true" />
+
+        <!-- Tarjeta Blanca con Contenido -->
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/espaciador_superior"
+            android:layout_marginHorizontal="20dp"
+            android:layout_marginBottom="20dp"
+            app:cardCornerRadius="15dp"
+            app:cardElevation="8dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="28dp">
+
+                <!-- Logo -->
+                <ImageView
+                    android:layout_width="100dp"
+                    android:layout_height="100dp"
+                    android:layout_gravity="center"
+                    android:src="@drawable/logo_dragon"
+                    android:contentDescription="Logo Asiste Dragón"
+                    android:layout_marginBottom="16dp"/>
+
+                <!-- Título -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:text="Registro de Profesor"
+                    android:textSize="26sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/green_primary"
+                    android:layout_marginBottom="8dp"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:text="Complete sus datos para continuar"
+                    android:textSize="14sp"
+                    android:textColor="@color/gray_medium"
+                    android:layout_marginBottom="24dp"/>
+
+                <!-- Nombre Completo -->
+                <com.google.android.material.textfield.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Nombre Completo"
+                    android:layout_marginBottom="14dp"
+                    app:startIconDrawable="@android:drawable/ic_menu_edit"
+                    app:startIconTint="@color/green_primary"
+                    app:hintTextColor="@color/green_primary"
+                    app:boxStrokeColor="@color/green_primary"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/campo_nombre_completo"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="textPersonName|textCapWords"
+                        android:textSize="16sp"/>
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <!-- Correo Institucional -->
+                <com.google.android.material.textfield.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Correo Institucional"
+                    android:layout_marginBottom="14dp"
+                    app:startIconDrawable="@android:drawable/ic_dialog_email"
+                    app:startIconTint="@color/green_primary"
+                    app:hintTextColor="@color/green_primary"
+                    app:boxStrokeColor="@color/green_primary"
+                    app:helperText="Ejemplo: usuario@utfv.edu.mx"
+                    app:helperTextTextColor="@color/gray_medium"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/campo_correo"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="textEmailAddress"
+                        android:textSize="16sp"/>
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <!-- Número de Empleado -->
+                <com.google.android.material.textfield.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Número de Empleado"
+                    android:layout_marginBottom="14dp"
+                    app:startIconDrawable="@android:drawable/ic_menu_sort_by_size"
+                    app:startIconTint="@color/green_primary"
+                    app:hintTextColor="@color/green_primary"
+                    app:boxStrokeColor="@color/green_primary"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/campo_numero_empleado"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="number"
+                        android:textSize="16sp"/>
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <!-- Tipo de Profesor - Dropdown -->
+                <com.google.android.material.textfield.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Tipo de Profesor"
+                    android:layout_marginBottom="14dp"
+                    app:startIconDrawable="@android:drawable/ic_menu_view"
+                    app:startIconTint="@color/green_primary"
+                    app:hintTextColor="@color/green_primary"
+                    app:boxStrokeColor="@color/green_primary"
+                    app:endIconMode="dropdown_menu"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu">
+
+                    <AutoCompleteTextView
+                        android:id="@+id/campo_tipo_profesor"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="none"
+                        android:textSize="16sp"
+                        android:paddingVertical="16dp"/>
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <!-- Turno - Dropdown -->
+                <com.google.android.material.textfield.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Turno"
+                    android:layout_marginBottom="14dp"
+                    app:startIconDrawable="@android:drawable/ic_menu_recent_history"
+                    app:startIconTint="@color/green_primary"
+                    app:hintTextColor="@color/green_primary"
+                    app:boxStrokeColor="@color/green_primary"
+                    app:endIconMode="dropdown_menu"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu">
+
+                    <AutoCompleteTextView
+                        android:id="@+id/campo_turno"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="none"
+                        android:textSize="16sp"
+                        android:paddingVertical="16dp"/>
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <!-- Teléfono -->
+                <com.google.android.material.textfield.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Teléfono de Contacto"
+                    android:layout_marginBottom="14dp"
+                    app:startIconDrawable="@android:drawable/stat_sys_phone_call"
+                    app:startIconTint="@color/green_primary"
+                    app:hintTextColor="@color/green_primary"
+                    app:boxStrokeColor="@color/green_primary"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/campo_telefono"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="phone"
+                        android:textSize="16sp"/>
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <!-- Contraseña -->
+                <com.google.android.material.textfield.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Contraseña"
+                    android:layout_marginBottom="14dp"
+                    app:startIconDrawable="@android:drawable/ic_lock_idle_lock"
+                    app:startIconTint="@color/green_primary"
+                    app:hintTextColor="@color/green_primary"
+                    app:boxStrokeColor="@color/green_primary"
+                    app:endIconMode="password_toggle"
+                    app:endIconTint="@color/green_primary"
+                    app:helperText="Mínimo 6 caracteres"
+                    app:helperTextTextColor="@color/gray_medium"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/campo_contrasena"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="textPassword"
+                        android:textSize="16sp"/>
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <!-- Confirmar Contraseña -->
+                <com.google.android.material.textfield.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Confirmar Contraseña"
+                    android:layout_marginBottom="20dp"
+                    app:startIconDrawable="@android:drawable/ic_lock_idle_lock"
+                    app:startIconTint="@color/green_primary"
+                    app:hintTextColor="@color/green_primary"
+                    app:boxStrokeColor="@color/green_primary"
+                    app:endIconMode="password_toggle"
+                    app:endIconTint="@color/green_primary"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/campo_confirmar_contrasena"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="textPassword"
+                        android:textSize="16sp"/>
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <!-- Información sobre el PIN -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:background="@drawable/info_box_background"
+                    android:padding="14dp"
+                    android:layout_marginBottom="16dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="ℹ️"
+                        android:textSize="18sp"
+                        android:layout_marginEnd="10dp"/>
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Al registrarse, configurará un PIN"
+                        android:textSize="12sp"
+                        android:textColor="@color/green_dark"
+                        android:lineSpacingExtra="2dp"/>
+
+                </LinearLayout>
+
+                <!-- Términos y Condiciones -->
+                <CheckBox
+                    android:id="@+id/check_terminos"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Acepto los términos y condiciones de uso"
+                    android:textSize="14sp"
+                    android:buttonTint="@color/green_primary"
+                    android:layout_marginBottom="20dp"/>
+
+                <!-- Botón Registrarse -->
+                <Button
+                    android:id="@+id/boton_registrarse"
+                    android:layout_width="match_parent"
+                    android:layout_height="56dp"
+                    android:text="REGISTRARSE"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:backgroundTint="@color/green_primary"
+                    android:textColor="@color/white"
+                    app:cornerRadius="12dp"
+                    android:elevation="4dp"
+                    android:layout_marginBottom="16dp"/>
+
+                <!-- Divisor -->
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@color/gray_light"
+                    android:layout_marginVertical="12dp"/>
+
+                <!-- Link a Login -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="¿Ya tiene una cuenta? "
+                        android:textSize="14sp"
+                        android:textColor="@color/gray_medium"/>
+
+                    <TextView
+                        android:id="@+id/texto_ir_login"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Iniciar Sesión"
+                        android:textSize="14sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/green_primary"
+                        android:padding="4dp"/>
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+        </androidx.cardview.widget.CardView>
+
+    </RelativeLayout>
+
+</ScrollView>

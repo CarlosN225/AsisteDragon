@@ -19,3 +19,4 @@ local.properties
 *.logcat
 hs_err_pid*.log
 replay_pid*.log
+app/google-services.json

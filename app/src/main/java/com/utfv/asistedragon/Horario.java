@@ -49,6 +49,18 @@ import androidx.viewpager2.widget.ViewPager2;
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
 
+/**
+ * Activity principal para la gestión del horario académico del profesor.
+ *
+ * Permite subir el horario en formato PDF o imagen, enviarlo a MistralOCRService
+ * para su reconocimiento óptico de caracteres (OCR), y mostrar las materias y
+ * sesiones detectadas para su revisión, edición y confirmación por parte del usuario.
+ *
+ * Una vez confirmadas, las materias se guardan localmente (SharedPreferences) y de
+ * forma remota en Firestore, se programan las notificaciones correspondientes
+ * mediante NotificacionesManager, y se genera la vista semanal del horario utilizando
+ * ViewPager2 y TabLayout.
+ */
 
 public class Horario extends AppCompatActivity {
 

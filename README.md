@@ -44,4 +44,4 @@ Este repositorio no incluye credenciales ni archivos de configuración sensibles
 
 ## Estado del proyecto
 
-Módulo de gestión de horarios (Horario.java) documentado. Integración con Firestore y notificaciones automáticas funcionando correctamente.
+Módulo de reconocimiento óptico de caracteres (OCR) documentado y estable. Módulo de gestión de horarios (Horario.java) documentado. Pipeline de integración continua (CI) configurado y en funcionamiento mediante GitHub Actions. Integración con Firestore y notificaciones automáticas funcionando correctamente.

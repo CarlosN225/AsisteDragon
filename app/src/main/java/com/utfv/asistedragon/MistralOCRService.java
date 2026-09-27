@@ -23,6 +23,17 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
+
+/**
+ * Servicio encargado de comunicarse con la API de Mistral AI (modelo de visión pixtral-12b)
+ * para realizar reconocimiento óptico de caracteres (OCR) sobre los horarios en PDF.
+ *
+ * Incluye lógica de reintentos ante fallos de red o respuestas erróneas del servicio,
+ * utilizando un esquema de backoff definido en DELAYS_REINTENTO.
+ *
+ * La clave de API se obtiene de forma segura desde BuildConfig, la cual a su vez
+ * se genera a partir del archivo local.properties (nunca subido al repositorio).
+ */
 public class MistralOCRService {
 
     private static final String TAG = "MistralOCR";

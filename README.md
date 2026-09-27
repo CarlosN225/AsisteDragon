@@ -41,3 +41,7 @@ Este repositorio no incluye credenciales ni archivos de configuración sensibles
 - Android Studio (versión reciente)
 - Cuenta de Firebase propia
 - API key de Mistral AI
+
+## Estado del proyecto
+
+Módulo de reconocimiento óptico de caracteres (OCR) documentado y estable. Pipeline de integración continua (CI) configurado y en funcionamiento mediante GitHub Actions.

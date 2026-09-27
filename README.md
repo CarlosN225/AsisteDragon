@@ -41,3 +41,7 @@ Este repositorio no incluye credenciales ni archivos de configuración sensibles
 - Android Studio (versión reciente)
 - Cuenta de Firebase propia
 - API key de Mistral AI
+
+## Estado del proyecto
+
+Módulo de gestión de horarios (Horario.java) documentado. Integración con Firestore y notificaciones automáticas funcionando correctamente.

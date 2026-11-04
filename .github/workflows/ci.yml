@@ -1,46 +1,60 @@
-name: CI
+name: CI Aplicacion Movil y Docker
 
 on:
   push:
-    branches:
-      - main
+    branches: [main]
   pull_request:
-    branches:
-      - main
+    branches: [main]
+
+permissions:
+  contents: read
 
 jobs:
-  build:
+  probar-backend:
     runs-on: ubuntu-latest
-
+    defaults:
+      run:
+        working-directory: backend
     steps:
-      - name: Descargar código
-        uses: actions/checkout@v4
-
-      - name: Configurar JDK 17
-        uses: actions/setup-java@v4
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
         with:
-          distribution: 'temurin'
-          java-version: '17'
+          node-version: "20"
+          cache: npm
+          cache-dependency-path: backend/package-lock.json
+      - name: Instalar dependencias
+        run: npm ci
+      - name: Ejecutar pruebas
+        run: npm test
 
-      - name: Reconstruir local.properties
+  compilar-android:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+      - uses: gradle/actions/setup-gradle@v4
+      - name: Compilar APK
+        working-directory: android-app
         run: |
-          echo "sdk.dir=$ANDROID_HOME" > local.properties
-          echo "MISTRAL_API_KEY=${{ secrets.MISTRAL_API_KEY }}" >> local.properties
+          chmod +x gradlew
+          ./gradlew assembleDebug
 
-      - name: Reconstruir google-services.json
-        run: echo "${{ secrets.GOOGLE_SERVICES_JSON }}" | base64 -d > app/google-services.json
-
-      - name: Dar permisos de ejecución a Gradle
-        run: chmod +x ./gradlew
-
-      - name: Compilar proyecto
-        run: ./gradlew assembleDebug
-
-      - name: Ejecutar pruebas unitarias
-        run: ./gradlew test
-
-      - name: Subir APK como artefacto
-        uses: actions/upload-artifact@v4
+  publicar-docker:
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    needs: [probar-backend, compilar-android]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: docker/setup-buildx-action@v3
+      - uses: docker/login-action@v3
         with:
-          name: app-debug
-          path: app/build/outputs/apk/debug/app-debug.apk
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+      - uses: docker/build-push-action@v6
+        with:
+          context: ./backend
+          push: true
+          tags: 23302134/control-visitas-api:latest

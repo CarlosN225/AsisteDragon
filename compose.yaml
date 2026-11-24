@@ -1,16 +1,34 @@
 services:
-  api:
-    build: ./backend
+  # Microservicio 1: Usuarios
+  usuarios-service:
+    build: ./backend-usuarios
+    container_name: asistedragon-usuarios
     ports:
-      - "3000:3000"
+      - "3001:3001"
     environment:
+      PORT: 3001
       REDIS_URL: redis://redis:6379
     depends_on:
       redis:
         condition: service_healthy
 
+  # Microservicio 2: Asistencias y Visitas
+  asistencias-service:
+    build: ./backend
+    container_name: asistedragon-asistencias
+    ports:
+      - "3000:3000"
+    environment:
+      PORT: 3000
+      REDIS_URL: redis://redis:6379
+    depends_on:
+      redis:
+        condition: service_healthy
+
+  # Base de Datos Persistente en Redis
   redis:
     image: redis:7-alpine
+    container_name: asistedragon-redis
     command: ["redis-server", "--appendonly", "yes"]
     volumes:
       - redis_data:/data

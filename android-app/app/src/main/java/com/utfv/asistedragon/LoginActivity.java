@@ -146,39 +146,81 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void iniciarSesionFirebase(final String correo, String contrasena) {
-        mAuth.signInWithEmailAndPassword(correo, contrasena)
-                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(Task<AuthResult> task) {
-                        if (task.isSuccessful()) {
-                            // Login exitoso
-                            FirebaseUser user = mAuth.getCurrentUser();
-                            if (user != null) {
-                                // Cargar datos del usuario desde Firestore
-                                cargarDatosUsuario(user.getUid(), correo);
-                            }
-                        } else {
-                            // Error en el login
-                            botonIniciarSesion.setEnabled(true);
-                            botonIniciarSesion.setText("INICIAR SESIÓN");
+        okhttp3.OkHttpClient client = new okhttp3.OkHttpClient();
 
-                            String errorMsg = "Credenciales incorrectas";
-                            if (task.getException() != null) {
-                                String exceptionMsg = task.getException().getMessage();
-                                if (exceptionMsg != null) {
-                                    if (exceptionMsg.contains("no user record")) {
-                                        errorMsg = "No existe una cuenta con este correo";
-                                    } else if (exceptionMsg.contains("password is invalid")) {
-                                        errorMsg = "Contraseña incorrecta";
-                                    } else if (exceptionMsg.contains("network")) {
-                                        errorMsg = "Error de conexión. Verifique su internet";
-                                    }
-                                }
-                            }
-                            Toast.makeText(LoginActivity.this, "  " + errorMsg, Toast.LENGTH_LONG).show();
+        org.json.JSONObject json = new org.json.JSONObject();
+        try {
+            json.put("correo", correo);
+            json.put("contrasena", contrasena);
+        } catch (org.json.JSONException e) {
+            e.printStackTrace();
+        }
+
+        okhttp3.RequestBody body = okhttp3.RequestBody.create(
+                json.toString(),
+                okhttp3.MediaType.parse("application/json; charset=utf-8")
+        );
+
+        okhttp3.Request request = new okhttp3.Request.Builder()
+                .url("http://10.0.2.2:3001/api/usuarios/login")
+                .post(body)
+                .build();
+
+        client.newCall(request).enqueue(new okhttp3.Callback() {
+            @Override
+            public void onFailure(okhttp3.Call call, java.io.IOException e) {
+                runOnUiThread(() -> {
+                    botonIniciarSesion.setEnabled(true);
+                    botonIniciarSesion.setText("INICIAR SESIÓN");
+                    Toast.makeText(LoginActivity.this,
+                            "Error al conectar con Microservicio de Usuarios: " + e.getMessage(),
+                            Toast.LENGTH_LONG).show();
+                });
+            }
+
+            @Override
+            public void onResponse(okhttp3.Call call, okhttp3.Response response) throws java.io.IOException {
+                String respuestaJson = response.body() != null ? response.body().string() : "";
+
+                runOnUiThread(() -> {
+                    botonIniciarSesion.setEnabled(true);
+                    botonIniciarSesion.setText("INICIAR SESIÓN");
+
+                    if (response.isSuccessful()) {
+                        try {
+                            org.json.JSONObject res = new org.json.JSONObject(respuestaJson);
+                            org.json.JSONObject usuario = res.getJSONObject("usuario");
+
+                            SharedPreferences prefs = getSharedPreferences("AsisteDragonPrefs", MODE_PRIVATE);
+                            SharedPreferences.Editor editor = prefs.edit();
+
+                            editor.putString("user_uid", usuario.optString("id", "usr_docente"));
+                            editor.putString("user_email", usuario.optString("correo", correo));
+                            editor.putString("user_nombre", usuario.optString("nombreCompleto", "Profesor"));
+                            editor.putString("user_rol", usuario.optString("rol", "docente"));
+                            editor.putString("user_tipo", usuario.optString("tipoProfesor", "Asignatura"));
+                            editor.putString("user_turno", usuario.optString("turno", "Matutino"));
+                            editor.putBoolean("is_logged_in", true);
+                            editor.putBoolean("session_persistent", true);
+                            editor.apply();
+
+                            Toast.makeText(LoginActivity.this, "Sesión iniciada con Microservicio", Toast.LENGTH_SHORT).show();
+                            irAPanelPrincipal();
+
+                        } catch (Exception ex) {
+                            Toast.makeText(LoginActivity.this, "Error al procesar usuario", Toast.LENGTH_SHORT).show();
                         }
+                    } else {
+                        String errorMsg = "Credenciales incorrectas";
+                        try {
+                            org.json.JSONObject errJson = new org.json.JSONObject(respuestaJson);
+                            if (errJson.has("error")) errorMsg = errJson.getString("error");
+                        } catch (Exception ignored) {}
+                        Toast.makeText(LoginActivity.this, errorMsg, Toast.LENGTH_LONG).show();
                     }
                 });
+            }
+        });
     }
 
     private void cargarDatosUsuario(String uid, final String correo) {

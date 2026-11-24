@@ -217,37 +217,82 @@ public class RegistroActivity extends AppCompatActivity {
                                    final String numeroEmpleado, final String tipoProfesor,
                                    final String turno, final String telefono, String contrasena) {
 
-        // Crear usuario en Firebase Authentication
-        mAuth.createUserWithEmailAndPassword(correo, contrasena)
-                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(Task<AuthResult> task) {
-                        if (task.isSuccessful()) {
-                            // Registro exitoso
-                            FirebaseUser firebaseUser = mAuth.getCurrentUser();
-                            if (firebaseUser != null) {
-                                String uid = firebaseUser.getUid();
+        okhttp3.OkHttpClient client = new okhttp3.OkHttpClient();
 
-                                // Crear objeto Usuario
-                                Usuario usuario = new Usuario(uid, nombreCompleto, correo,
-                                        numeroEmpleado, tipoProfesor, turno, telefono);
+        org.json.JSONObject json = new org.json.JSONObject();
+        try {
+            json.put("nombreCompleto", nombreCompleto);
+            json.put("correo", correo);
+            json.put("numeroEmpleado", numeroEmpleado);
+            json.put("tipoProfesor", tipoProfesor);
+            json.put("turno", turno);
+            json.put("telefono", telefono);
+            json.put("contrasena", contrasena);
+        } catch (org.json.JSONException e) {
+            e.printStackTrace();
+        }
 
-                                // Guardar en Firestore
-                                guardarEnFirestore(usuario);
-                            }
-                        } else {
-                            // Error en el registro
-                            botonRegistrarse.setEnabled(true);
-                            botonRegistrarse.setText("REGISTRARSE");
+        okhttp3.RequestBody body = okhttp3.RequestBody.create(
+                json.toString(),
+                okhttp3.MediaType.parse("application/json; charset=utf-8")
+        );
 
-                            String errorMsg = "Error al registrar: ";
-                            if (task.getException() != null) {
-                                errorMsg += task.getException().getMessage();
-                            }
-                            Toast.makeText(RegistroActivity.this, errorMsg, Toast.LENGTH_LONG).show();
-                        }
+        okhttp3.Request request = new okhttp3.Request.Builder()
+                .url("http://10.0.2.2:3001/api/usuarios/registro")
+                .post(body)
+                .build();
+
+        client.newCall(request).enqueue(new okhttp3.Callback() {
+            @Override
+            public void onFailure(okhttp3.Call call, java.io.IOException e) {
+                runOnUiThread(() -> {
+                    botonRegistrarse.setEnabled(true);
+                    botonRegistrarse.setText("REGISTRARSE");
+                    Toast.makeText(RegistroActivity.this,
+                            "Error al conectar con Microservicio de Usuarios: " + e.getMessage(),
+                            Toast.LENGTH_LONG).show();
+                });
+            }
+
+            @Override
+            public void onResponse(okhttp3.Call call, okhttp3.Response response) throws java.io.IOException {
+                String respuestaJson = response.body() != null ? response.body().string() : "";
+
+                runOnUiThread(() -> {
+                    botonRegistrarse.setEnabled(true);
+                    botonRegistrarse.setText("REGISTRARSE");
+
+                    if (response.isSuccessful()) {
+                        Toast.makeText(RegistroActivity.this,
+                                "¡Registro exitoso en Microservicio Usuarios!",
+                                Toast.LENGTH_SHORT).show();
+
+                        // Guardar datos básicos localmente
+                        getSharedPreferences("AsisteDragonPrefs", MODE_PRIVATE)
+                                .edit()
+                                .putString("user_email", correo)
+                                .putString("user_nombre", nombreCompleto)
+                                .putString("user_numero_empleado", numeroEmpleado)
+                                .putString("user_tipo", tipoProfesor)
+                                .putString("user_turno", turno)
+                                .putString("user_telefono", telefono)
+                                .apply();
+
+                        // Pasar a configurar PIN
+                        Intent intent = new Intent(RegistroActivity.this, ConfigurarPinActivity.class);
+                        startActivity(intent);
+                        finish();
+                    } else {
+                        String errorMsg = "Error en el registro";
+                        try {
+                            org.json.JSONObject errJson = new org.json.JSONObject(respuestaJson);
+                            if (errJson.has("error")) errorMsg = errJson.getString("error");
+                        } catch (Exception ignored) {}
+                        Toast.makeText(RegistroActivity.this, errorMsg, Toast.LENGTH_LONG).show();
                     }
                 });
+            }
+        });
     }
 
     private void guardarEnFirestore(Usuario usuario) {

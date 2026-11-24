@@ -293,10 +293,10 @@ public class QRScannerActivity extends AppCompatActivity {
         cameraProvider.bindToLifecycle(this, selector, preview, analysis);
     }
 
+    @androidx.annotation.OptIn(markerClass = androidx.camera.core.ExperimentalGetImage.class)
     private void procesarImagen(ImageProxy imageProxy) {
         if (qrDetectado) { imageProxy.close(); return; }
 
-        @androidx.camera.core.ExperimentalGetImage
         InputImage image = InputImage.fromMediaImage(
                 imageProxy.getImage(), imageProxy.getImageInfo().getRotationDegrees());
 
@@ -434,20 +434,55 @@ public class QRScannerActivity extends AppCompatActivity {
         final String primeraHoraFinal      = primeraHoraClase;
         final int    minutosDifFinal       = minutosDiferencia;
 
+        if (userUid == null || userUid.isEmpty()) userUid = "usr_docente";
+
         Asistencia asistencia = new Asistencia(
                 userUid, userName, userEmail, userNumeroEmpleado,
                 userTipo, userTurno,
                 fecha, hora, timestamp, dia,
                 estadoFinal, primeraHoraFinal, minutosDifFinal, codigoQR);
 
-        db.collection("asistencias")
-                .add(asistencia)
-                .addOnSuccessListener(docRef -> mostrarPantallaExito(hora, estadoFinal))
-                .addOnFailureListener(e -> {
-                    Toast.makeText(this, "Error al registrar: " + e.getMessage(), Toast.LENGTH_LONG).show();
+        // Enviar al Microservicio de Asistencias en Docker (Puerto 3000)
+        okhttp3.OkHttpClient client = new okhttp3.OkHttpClient();
+        String jsonAsistencia = new Gson().toJson(asistencia);
+
+        okhttp3.RequestBody body = okhttp3.RequestBody.create(
+                jsonAsistencia,
+                okhttp3.MediaType.parse("application/json; charset=utf-8")
+        );
+
+        okhttp3.Request request = new okhttp3.Request.Builder()
+                .url("http://10.0.2.2:3000/api/asistencias/registrar")
+                .post(body)
+                .build();
+
+        client.newCall(request).enqueue(new okhttp3.Callback() {
+            @Override
+            public void onFailure(okhttp3.Call call, java.io.IOException e) {
+                runOnUiThread(() -> {
+                    Toast.makeText(QRScannerActivity.this,
+                            "Error conectando con Microservicio de Asistencias: " + e.getMessage(),
+                            Toast.LENGTH_LONG).show();
                     qrDetectado = false;
                     textoEstado.setText("Buscando código QR...");
                 });
+            }
+
+            @Override
+            public void onResponse(okhttp3.Call call, okhttp3.Response response) {
+                runOnUiThread(() -> {
+                    if (response.isSuccessful()) {
+                        mostrarPantallaExito(hora, estadoFinal);
+                    } else {
+                        Toast.makeText(QRScannerActivity.this,
+                                "Error del servidor (" + response.code() + ")",
+                                Toast.LENGTH_LONG).show();
+                        qrDetectado = false;
+                        textoEstado.setText("Buscando código QR...");
+                    }
+                });
+            }
+        });
     }
 
     // ══════════════════════════════════════════════════════════════════════

@@ -162,50 +162,85 @@ public class VerificarPinActivity extends AppCompatActivity {
     private void verificarPin() {
         String pinIngresado = pinActual.toString();
 
-        SharedPreferences prefs = getSharedPreferences("AsisteDragonPrefs", MODE_PRIVATE);
-        String hashGuardado = prefs.getString("pin_hash", "");
+        okhttp3.OkHttpClient client = new okhttp3.OkHttpClient();
+        org.json.JSONObject json = new org.json.JSONObject();
+        try {
+            json.put("correo", emailUsuario);
+            json.put("pin", pinIngresado);
+        } catch (Exception ignored) {}
 
-        if (SecurityUtils.verificarPIN(pinIngresado, hashGuardado)) {
-            // PIN CORRECTO
-            Toast.makeText(this, "Acceso concedido", Toast.LENGTH_SHORT).show();
+        okhttp3.RequestBody body = okhttp3.RequestBody.create(
+                json.toString(),
+                okhttp3.MediaType.parse("application/json; charset=utf-8")
+        );
 
-            FirebaseUser currentUser = mAuth.getCurrentUser();
+        okhttp3.Request request = new okhttp3.Request.Builder()
+                .url("http://10.0.2.2:3001/api/usuarios/verificar-pin")
+                .post(body)
+                .build();
 
-            if (currentUser != null) {
-                // Hay sesión activa — flujo normal
-                cargarDatosUsuarioYContinuar(currentUser.getUid());
-            } else {
-                // No hay sesión de Firebase (cerró sesión completa)
-                // Usar el UID guardado en SharedPreferences para cargar datos
-                String uidGuardado = prefs.getString("user_uid", "");
-                if (!uidGuardado.isEmpty()) {
-                    cargarDatosUsuarioYContinuar(uidGuardado);
-                } else {
-                    // No hay UID guardado — buscar por email en Firestore
-                    cargarDatosUsuarioPorEmail(emailUsuario);
-                }
+        client.newCall(request).enqueue(new okhttp3.Callback() {
+            @Override
+            public void onFailure(okhttp3.Call call, java.io.IOException e) {
+                runOnUiThread(() -> {
+                    // Fallback local si no hay conexión momentánea
+                    SharedPreferences prefs = getSharedPreferences("AsisteDragonPrefs", MODE_PRIVATE);
+                    String hashGuardado = prefs.getString("pin_hash", "");
+                    if (!hashGuardado.isEmpty() && SecurityUtils.verificarPIN(pinIngresado, hashGuardado)) {
+                        Toast.makeText(VerificarPinActivity.this, "Acceso concedido", Toast.LENGTH_SHORT).show();
+                        irAPanelPrincipal();
+                    } else {
+                        Toast.makeText(VerificarPinActivity.this, "Error de red con microservicio", Toast.LENGTH_SHORT).show();
+                        reiniciarPin();
+                    }
+                });
             }
 
-        } else {
-            // PIN INCORRECTO
-            intentosFallidos++;
-            int intentosRestantes = MAX_INTENTOS - intentosFallidos;
-
-            if (intentosFallidos >= MAX_INTENTOS) {
-                Toast.makeText(this,
-                        "Máximo de intentos alcanzado. Use su contraseña.",
-                        Toast.LENGTH_LONG).show();
-                if (quickAccess) {
-                    prefs.edit().putBoolean("session_persistent", false).apply();
-                }
-                irALogin();
-            } else {
-                Toast.makeText(this,
-                        "PIN incorrecto. Intentos restantes: " + intentosRestantes,
-                        Toast.LENGTH_SHORT).show();
-                reiniciarPin();
+            @Override
+            public void onResponse(okhttp3.Call call, okhttp3.Response response) throws java.io.IOException {
+                String resStr = response.body() != null ? response.body().string() : "";
+                runOnUiThread(() -> {
+                    if (response.isSuccessful()) {
+                        try {
+                            org.json.JSONObject res = new org.json.JSONObject(resStr);
+                            org.json.JSONObject u = res.getJSONObject("usuario");
+                            getSharedPreferences("AsisteDragonPrefs", MODE_PRIVATE).edit()
+                                    .putString("user_uid", u.optString("id", "usr_docente"))
+                                    .putString("user_email", u.optString("correo", emailUsuario))
+                                    .putString("user_nombre", u.optString("nombreCompleto", "Docente"))
+                                    .putString("user_rol", u.optString("rol", "docente"))
+                                    .putString("user_tipo", u.optString("tipoProfesor", "Asignatura"))
+                                    .putString("user_turno", u.optString("turno", "Matutino"))
+                                    .putString("user_numero_empleado", u.optString("numeroEmpleado", "—"))
+                                    .putString("user_telefono", u.optString("telefono", "—"))
+                                    .putBoolean("is_logged_in", true)
+                                    .putBoolean("session_persistent", true)
+                                    .apply();
+                        } catch (Exception ignored) {}
+                        Toast.makeText(VerificarPinActivity.this, "Acceso concedido ✓", Toast.LENGTH_SHORT).show();
+                        irAPanelPrincipal();
+                    } else {
+                        intentosFallidos++;
+                        int intentosRestantes = MAX_INTENTOS - intentosFallidos;
+                        if (intentosFallidos >= MAX_INTENTOS) {
+                            Toast.makeText(VerificarPinActivity.this,
+                                    "Máximo de intentos alcanzado. Use su contraseña.",
+                                    Toast.LENGTH_LONG).show();
+                            if (quickAccess) {
+                                getSharedPreferences("AsisteDragonPrefs", MODE_PRIVATE)
+                                        .edit().putBoolean("session_persistent", false).apply();
+                            }
+                            irALogin();
+                        } else {
+                            Toast.makeText(VerificarPinActivity.this,
+                                    "PIN incorrecto. Intentos restantes: " + intentosRestantes,
+                                    Toast.LENGTH_SHORT).show();
+                            reiniciarPin();
+                        }
+                    }
+                });
             }
-        }
+        });
     }
 
     private void cargarDatosUsuarioPorEmail(String email) {
@@ -325,6 +360,7 @@ public class VerificarPinActivity extends AppCompatActivity {
         finish();
     }
 
+    @android.annotation.SuppressLint("MissingSuperCall")
     @Override
     public void onBackPressed() {
         // Ir al login si presiona atrás

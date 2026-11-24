@@ -345,30 +345,54 @@ public class PanelPrincipalActivity extends AppCompatActivity {
     private void verificarAsistenciaHoy() {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
         String fechaHoy = sdf.format(new Date());
-        db.collection("asistencias")
-                .whereEqualTo("profesorUid", userUid)
-                .whereEqualTo("fecha", fechaHoy)
-                .limit(1)
+        String uidConsulta = (userUid != null && !userUid.isEmpty()) ? userUid : "usr_docente";
+
+        okhttp3.OkHttpClient client = new okhttp3.OkHttpClient();
+        okhttp3.Request request = new okhttp3.Request.Builder()
+                .url("http://10.0.2.2:3000/api/asistencias/hoy?uid="
+                        + android.net.Uri.encode(uidConsulta) + "&fecha=" + fechaHoy)
                 .get()
-                .addOnSuccessListener(q -> {
-                    if (!q.isEmpty()) {
-                        Asistencia a = q.getDocuments().get(0).toObject(Asistencia.class);
-                        if (a != null) {
-                            asistenciaEscaneada = true;
-                            horaRegistroHoy = extraerHHMM(a.getHoraRegistro());
-                            mostrarAsistenciaRegistrada(a);
-                        }
-                    } else {
+                .build();
+
+        client.newCall(request).enqueue(new okhttp3.Callback() {
+            @Override
+            public void onFailure(okhttp3.Call call, java.io.IOException e) {
+                runOnUiThread(() -> {
+                    mostrarSinRegistrar();
+                    cargarYMostrarBannerHorario();
+                });
+            }
+
+            @Override
+            public void onResponse(okhttp3.Call call, okhttp3.Response response) throws java.io.IOException {
+                String resStr = response.body() != null ? response.body().string() : "";
+                runOnUiThread(() -> {
+                    boolean encontrada = false;
+                    if (response.isSuccessful()) {
+                        try {
+                            org.json.JSONObject obj = new org.json.JSONObject(resStr);
+                            if (obj.optBoolean("registrada", false)) {
+                                String asistJson = obj.getJSONObject("asistencia").toString();
+                                Asistencia a = new Gson().fromJson(asistJson, Asistencia.class);
+                                if (a != null) {
+                                    encontrada = true;
+                                    asistenciaEscaneada = true;
+                                    horaRegistroHoy = extraerHHMM(a.getHoraRegistro());
+                                    mostrarAsistenciaRegistrada(a);
+                                }
+                            }
+                        } catch (Exception ignored) {}
+                    }
+
+                    if (!encontrada) {
                         asistenciaEscaneada = false;
                         limpiarEstadosChecklist();
                         mostrarSinRegistrar();
                     }
                     cargarYMostrarBannerHorario();
-                })
-                .addOnFailureListener(e -> {
-                    mostrarSinRegistrar();
-                    cargarYMostrarBannerHorario();
                 });
+            }
+        });
     }
 
     private void mostrarAsistenciaRegistrada(Asistencia a) {

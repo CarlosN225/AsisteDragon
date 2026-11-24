@@ -447,23 +447,44 @@ public class Perfil extends AppCompatActivity {
                 .putString("user_turno",           userTurno)
                 .apply();
 
-        Map<String, Object> updates = new HashMap<>();
-        updates.put("nombre",         userName);
-        updates.put("numeroEmpleado", userNumEmp.equals("—") ? "" : userNumEmp);
-        updates.put("telefono",       userTelefono.equals("—") ? "" : userTelefono);
-        updates.put("tipo",           userTipo);
-        updates.put("turno",          userTurno);
+        okhttp3.OkHttpClient client = new okhttp3.OkHttpClient();
+        org.json.JSONObject json = new org.json.JSONObject();
+        try {
+            json.put("correo", userEmail);
+            json.put("nombreCompleto", userName);
+            json.put("numeroEmpleado", userNumEmp.equals("—") ? "" : userNumEmp);
+            json.put("telefono", userTelefono.equals("—") ? "" : userTelefono);
+            json.put("tipoProfesor", userTipo);
+            json.put("turno", userTurno);
+        } catch (Exception ignored) {}
 
-        db.collection("usuarios").document(userUid)
-                .update(updates)
-                .addOnSuccessListener(v -> {
-                    Toast.makeText(this, "Perfil actualizado ✓", Toast.LENGTH_SHORT).show();
-                    desactivarModoEdicion();
-                })
-                .addOnFailureListener(e -> {
-                    Toast.makeText(this, "Error: " + e.getMessage(), Toast.LENGTH_LONG).show();
+        okhttp3.RequestBody body = okhttp3.RequestBody.create(
+                json.toString(),
+                okhttp3.MediaType.parse("application/json; charset=utf-8")
+        );
+
+        okhttp3.Request request = new okhttp3.Request.Builder()
+                .url("http://10.0.2.2:3001/api/usuarios/perfil")
+                .put(body)
+                .build();
+
+        client.newCall(request).enqueue(new okhttp3.Callback() {
+            @Override
+            public void onFailure(okhttp3.Call call, java.io.IOException e) {
+                runOnUiThread(() -> {
+                    Toast.makeText(Perfil.this, "Guardado localmente (error red)", Toast.LENGTH_SHORT).show();
                     desactivarModoEdicion();
                 });
+            }
+
+            @Override
+            public void onResponse(okhttp3.Call call, okhttp3.Response response) {
+                runOnUiThread(() -> {
+                    Toast.makeText(Perfil.this, "Perfil actualizado en Microservicio ✓", Toast.LENGTH_SHORT).show();
+                    desactivarModoEdicion();
+                });
+            }
+        });
     }
 
     // ══ PIN ══════════════════════════════════════════════════════════════
@@ -704,6 +725,7 @@ public class Perfil extends AppCompatActivity {
         configurarBottomNavigation();
     }
 
+    @android.annotation.SuppressLint("MissingSuperCall")
     @Override
     public void onBackPressed() {
         if (modoEdicion) {

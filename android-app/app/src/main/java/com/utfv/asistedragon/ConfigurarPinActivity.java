@@ -158,44 +158,46 @@ public class ConfigurarPinActivity extends AppCompatActivity {
     }
 
     private void guardarPin(String pin) {
-
-        // Hashear el PIN con SHA-256
         String pinHasheado = SecurityUtils.hashSHA256(pin);
+        String correoGuardado = getSharedPreferences("AsisteDragonPrefs", MODE_PRIVATE)
+                .getString("user_email", "");
 
         // Guardar PIN localmente
         getSharedPreferences("AsisteDragonPrefs", MODE_PRIVATE)
                 .edit()
-                .putString("pin_hash", pinHasheado)  // ← Guardaba en texto plano
+                .putString("pin_hash", pinHasheado)
                 .putBoolean("pin_configurado", true)
                 .apply();
 
-        // Guardar PIN en Firebase también
-        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
-        if (currentUser != null) {
-            java.util.Map<String, Object> updates = new java.util.HashMap<>();
-            updates.put("pinConfigurado", true);
-            updates.put("pinHash", pinHasheado);  // ← Guardar hash en Firebase
+        // Guardar PIN en Microservicio Usuarios (Redis)
+        if (!correoGuardado.isEmpty()) {
+            okhttp3.OkHttpClient client = new okhttp3.OkHttpClient();
+            org.json.JSONObject json = new org.json.JSONObject();
+            try {
+                json.put("correo", correoGuardado);
+                json.put("pin", pin);
+            } catch (Exception ignored) {}
 
-            FirebaseFirestore.getInstance()
-                    .collection("usuarios")
-                    .document(currentUser.getUid())
-                    .update(updates)
-                    .addOnSuccessListener(new OnSuccessListener<Void>() {
-                        @Override
-                        public void onSuccess(Void aVoid) {
-                            Toast.makeText(ConfigurarPinActivity.this,
-                                    "PIN configurado exitosamente",
-                                    Toast.LENGTH_SHORT).show();
-                        }
-                    })
-                    .addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(Exception e) {
-                            Toast.makeText(ConfigurarPinActivity.this,
-                                    "Error al guardar PIN: " + e.getMessage(),
-                                    Toast.LENGTH_SHORT).show();
-                        }
-                    });
+            okhttp3.RequestBody body = okhttp3.RequestBody.create(
+                    json.toString(),
+                    okhttp3.MediaType.parse("application/json; charset=utf-8")
+            );
+            okhttp3.Request request = new okhttp3.Request.Builder()
+                    .url("http://10.0.2.2:3001/api/usuarios/pin")
+                    .put(body)
+                    .build();
+
+            client.newCall(request).enqueue(new okhttp3.Callback() {
+                @Override
+                public void onFailure(okhttp3.Call call, java.io.IOException e) { }
+
+                @Override
+                public void onResponse(okhttp3.Call call, okhttp3.Response response) {
+                    runOnUiThread(() ->
+                            Toast.makeText(ConfigurarPinActivity.this, "PIN guardado exitosamente", Toast.LENGTH_SHORT).show()
+                    );
+                }
+            });
         }
     }
 
@@ -219,6 +221,7 @@ public class ConfigurarPinActivity extends AppCompatActivity {
         finish();
     }
 
+    @android.annotation.SuppressLint("MissingSuperCall")
     @Override
     public void onBackPressed() {
         // Evitar que el usuario pueda volver atrás

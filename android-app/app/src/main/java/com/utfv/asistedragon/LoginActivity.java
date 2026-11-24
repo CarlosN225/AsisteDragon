@@ -371,63 +371,43 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void verificarPinEnFirebase(final String email) {
-        // Mostrar loading
         botonUsarPin.setEnabled(false);
 
-        db.collection("usuarios")
-                .whereEqualTo("correo", email)
-                .limit(1)
+        okhttp3.OkHttpClient client = new okhttp3.OkHttpClient();
+        okhttp3.Request request = new okhttp3.Request.Builder()
+                .url("http://10.0.2.2:3001/api/usuarios/perfil?correo=" + android.net.Uri.encode(email))
                 .get()
-                .addOnSuccessListener(new OnSuccessListener<com.google.firebase.firestore.QuerySnapshot>() {
-                    @Override
-                    public void onSuccess(com.google.firebase.firestore.QuerySnapshot queryDocumentSnapshots) {
-                        botonUsarPin.setEnabled(true);
+                .build();
 
-                        if (!queryDocumentSnapshots.isEmpty()) {
-                            // Usuario encontrado
-                            DocumentSnapshot document = queryDocumentSnapshots.getDocuments().get(0);
-                            Usuario usuario = document.toObject(Usuario.class);
+        client.newCall(request).enqueue(new okhttp3.Callback() {
+            @Override
+            public void onFailure(okhttp3.Call call, java.io.IOException e) {
+                runOnUiThread(() -> {
+                    botonUsarPin.setEnabled(true);
+                    Toast.makeText(LoginActivity.this, "Error de conexión: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                });
+            }
 
-                            if (usuario != null && usuario.isPinConfigurado()) {
-                                // SÍ tiene PIN configurado
+            @Override
+            public void onResponse(okhttp3.Call call, okhttp3.Response response) throws java.io.IOException {
+                runOnUiThread(() -> {
+                    botonUsarPin.setEnabled(true);
+                    if (response.isSuccessful()) {
+                        getSharedPreferences("AsisteDragonPrefs", MODE_PRIVATE)
+                                .edit()
+                                .putString("user_email", email)
+                                .putBoolean("pin_configurado", true)
+                                .apply();
 
-                                // Guardar datos localmente (incluido el PIN)
-                                SharedPreferences prefs = getSharedPreferences("AsisteDragonPrefs", MODE_PRIVATE);
-                                SharedPreferences.Editor editor = prefs.edit();
-
-                                editor.putString("user_email", email);
-                                editor.putString("user_uid", usuario.getUid());
-                                editor.putString("pin_hash", usuario.getPinHash());  // ← Guardar PIN localmente
-                                editor.putBoolean("pin_configurado", true);
-                                editor.apply();
-
-                                // Ir a verificar PIN
-                                Intent intent = new Intent(LoginActivity.this, VerificarPinActivity.class);
-                                intent.putExtra("email", email);
-                                startActivity(intent);
-                            } else {
-                                // NO tiene PIN configurado
-                                Toast.makeText(LoginActivity.this,
-                                        "Este usuario aún no ha configurado un PIN.\nPor favor, inicie sesión con su contraseña primero.",
-                                        Toast.LENGTH_LONG).show();
-                            }
-                        } else {
-                            // Usuario no encontrado
-                            Toast.makeText(LoginActivity.this,
-                                    "No existe una cuenta con este correo",
-                                    Toast.LENGTH_SHORT).show();
-                        }
-                    }
-                })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(Exception e) {
-                        botonUsarPin.setEnabled(true);
-                        Toast.makeText(LoginActivity.this,
-                                "Error de conexión: " + e.getMessage(),
-                                Toast.LENGTH_SHORT).show();
+                        Intent intent = new Intent(LoginActivity.this, VerificarPinActivity.class);
+                        intent.putExtra("email", email);
+                        startActivity(intent);
+                    } else {
+                        Toast.makeText(LoginActivity.this, "No existe una cuenta registrada con este correo", Toast.LENGTH_SHORT).show();
                     }
                 });
+            }
+        });
     }
 
     private void irAPanelPrincipal() {

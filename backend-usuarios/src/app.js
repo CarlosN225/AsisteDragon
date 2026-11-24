@@ -17,7 +17,6 @@ function hashSHA256(texto) {
   return crypto.createHash('sha256').update(String(texto)).digest('hex');
 }
 
-// Conectar a Redis y asegurar usuario base de prueba
 (async () => {
   try {
     await redisClient.connect();
@@ -40,41 +39,30 @@ function hashSHA256(texto) {
         fechaRegistro: new Date().toISOString()
       };
       await redisClient.hSet('usuarios_db', 'docente@utfv.edu.mx', JSON.stringify(usuarioBase));
-      console.log('Usuario por defecto guardado en Redis: docente@utfv.edu.mx');
     }
   } catch (err) {
     console.log('Error conectando a Redis:', err.message);
   }
 })();
 
-// 1. Estado del microservicio
 app.get('/health', async (req, res) => {
   try {
     const total = await redisClient.hLen('usuarios_db');
-    res.status(200).json({
-      microservicio: "usuarios",
-      status: "OK",
-      almacenamiento: "Redis Persistente",
-      usuariosRegistrados: total
-    });
+    res.status(200).json({ microservicio: "usuarios", status: "OK", storage: "Redis", usuariosRegistrados: total });
   } catch (error) {
     res.status(500).json({ error: "Error consultando estado en Redis" });
   }
 });
 
-// 2. Registro de usuarios (Persistente en Redis)
 app.post('/api/usuarios/registro', async (req, res) => {
   try {
     const { nombreCompleto, correo, numeroEmpleado, tipoProfesor, turno, telefono, contrasena, pin } = req.body;
-
     if (!correo || !correo.endsWith('@utfv.edu.mx')) {
       return res.status(400).json({ error: "Debe usar su correo institucional (@utfv.edu.mx)" });
     }
-
     if (!contrasena || contrasena.length < 6) {
       return res.status(400).json({ error: "La contraseña debe tener al menos 6 caracteres" });
     }
-
     const correoKey = correo.toLowerCase().trim();
     const yaExiste = await redisClient.hGet('usuarios_db', correoKey);
     if (yaExiste) {
@@ -97,46 +85,32 @@ app.post('/api/usuarios/registro', async (req, res) => {
     };
 
     await redisClient.hSet('usuarios_db', correoKey, JSON.stringify(nuevoUsuario));
-
     res.status(201).json({
-      mensaje: "Usuario docente registrado exitosamente en Redis",
-      usuario: {
-        id: nuevoUsuario.id,
-        nombreCompleto: nuevoUsuario.nombreCompleto,
-        correo: nuevoUsuario.correo,
-        rol: nuevoUsuario.rol
-      }
+      mensaje: "Usuario docente registrado exitosamente",
+      usuario: { id: nuevoUsuario.id, nombreCompleto: nuevoUsuario.nombreCompleto, correo: nuevoUsuario.correo, rol: nuevoUsuario.rol }
     });
   } catch (error) {
     res.status(500).json({ error: "Error interno al guardar usuario" });
   }
 });
 
-// 3. Inicio de sesión
 app.post('/api/usuarios/login', async (req, res) => {
   try {
     const { correo, contrasena } = req.body;
     const correoKey = (correo || '').toLowerCase().trim();
-
     const userJson = await redisClient.hGet('usuarios_db', correoKey);
-    if (!userJson) {
-      return res.status(404).json({ error: "No existe cuenta asociada a este correo" });
-    }
+    if (!userJson) return res.status(404).json({ error: "No existe cuenta asociada a este correo" });
 
     const usuario = JSON.parse(userJson);
     if (usuario.passwordHash !== hashSHA256(contrasena)) {
       return res.status(401).json({ error: "Contraseña incorrecta" });
     }
-
     res.status(200).json({
       mensaje: "Autenticación exitosa",
       usuario: {
-        id: usuario.id,
-        nombreCompleto: usuario.nombreCompleto,
-        correo: usuario.correo,
-        tipoProfesor: usuario.tipoProfesor,
-        turno: usuario.turno,
-        rol: usuario.rol
+        id: usuario.id, nombreCompleto: usuario.nombreCompleto, correo: usuario.correo,
+        numeroEmpleado: usuario.numeroEmpleado, tipoProfesor: usuario.tipoProfesor,
+        turno: usuario.turno, telefono: usuario.telefono, rol: usuario.rol
       }
     });
   } catch (error) {
@@ -144,20 +118,40 @@ app.post('/api/usuarios/login', async (req, res) => {
   }
 });
 
-// 4. Verificación de PIN
+app.put('/api/usuarios/pin', async (req, res) => {
+  try {
+    const { correo, pin } = req.body;
+    const correoKey = (correo || '').toLowerCase().trim();
+    const userJson = await redisClient.hGet('usuarios_db', correoKey);
+    if (!userJson) return res.status(404).json({ error: "Usuario no encontrado" });
+
+    const usuario = JSON.parse(userJson);
+    usuario.pinHash = hashSHA256(pin);
+    await redisClient.hSet('usuarios_db', correoKey, JSON.stringify(usuario));
+    res.status(200).json({ mensaje: "PIN actualizado correctamente" });
+  } catch (error) {
+    res.status(500).json({ error: "Error al actualizar PIN" });
+  }
+});
+
 app.post('/api/usuarios/verificar-pin', async (req, res) => {
   try {
     const { correo, pin } = req.body;
     const correoKey = (correo || '').toLowerCase().trim();
-
     const userJson = await redisClient.hGet('usuarios_db', correoKey);
-    if (!userJson) {
-      return res.status(404).json({ error: "Usuario no encontrado" });
-    }
+    if (!userJson) return res.status(404).json({ error: "Usuario no encontrado" });
 
     const usuario = JSON.parse(userJson);
     if (usuario.pinHash === hashSHA256(pin)) {
-      res.status(200).json({ mensaje: "PIN verificado correctamente", acceso: true });
+      res.status(200).json({
+        mensaje: "PIN verificado correctamente",
+        acceso: true,
+        usuario: {
+          id: usuario.id, nombreCompleto: usuario.nombreCompleto, correo: usuario.correo,
+          numeroEmpleado: usuario.numeroEmpleado, tipoProfesor: usuario.tipoProfesor,
+          turno: usuario.turno, telefono: usuario.telefono, rol: usuario.rol
+        }
+      });
     } else {
       res.status(401).json({ error: "PIN incorrecto", acceso: false });
     }
@@ -166,14 +160,11 @@ app.post('/api/usuarios/verificar-pin', async (req, res) => {
   }
 });
 
-// 5. Gestión de perfiles
 app.get('/api/usuarios/perfil', async (req, res) => {
   try {
     const correoKey = (req.query.correo || '').toLowerCase().trim();
     const userJson = await redisClient.hGet('usuarios_db', correoKey);
-    if (!userJson) {
-      return res.status(404).json({ error: "Perfil no encontrado" });
-    }
+    if (!userJson) return res.status(404).json({ error: "Perfil no encontrado" });
 
     const usuario = JSON.parse(userJson);
     const { passwordHash, pinHash, ...perfilSeguro } = usuario;
@@ -183,7 +174,28 @@ app.get('/api/usuarios/perfil', async (req, res) => {
   }
 });
 
-// 6. Gestión de roles
+app.put('/api/usuarios/perfil', async (req, res) => {
+  try {
+    const { correo, nombreCompleto, numeroEmpleado, tipoProfesor, turno, telefono } = req.body;
+    const correoKey = (correo || '').toLowerCase().trim();
+    const userJson = await redisClient.hGet('usuarios_db', correoKey);
+    if (!userJson) return res.status(404).json({ error: "Usuario no encontrado" });
+
+    const usuario = JSON.parse(userJson);
+    if (nombreCompleto) usuario.nombreCompleto = nombreCompleto;
+    if (numeroEmpleado !== undefined) usuario.numeroEmpleado = numeroEmpleado;
+    if (tipoProfesor) usuario.tipoProfesor = tipoProfesor;
+    if (turno) usuario.turno = turno;
+    if (telefono !== undefined) usuario.telefono = telefono;
+
+    await redisClient.hSet('usuarios_db', correoKey, JSON.stringify(usuario));
+    const { passwordHash, pinHash, ...perfilSeguro } = usuario;
+    res.status(200).json({ mensaje: "Perfil actualizado correctamente", usuario: perfilSeguro });
+  } catch (error) {
+    res.status(500).json({ error: "Error al actualizar perfil" });
+  }
+});
+
 app.get('/api/usuarios/roles', (req, res) => {
   res.status(200).json({
     rolesDisponibles: ["docente", "administrador", "coordinador"],

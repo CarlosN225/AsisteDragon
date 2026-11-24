@@ -1,5 +1,6 @@
 package com.utfv.asistedragon;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
@@ -159,110 +160,63 @@ public class Reportes extends AppCompatActivity {
     // ══ CARGA DE DATOS ════════════════════════════════════════════════
 
     private void cargarDatos() {
-        if (userUid.isEmpty()) {
-            mostrarSinDatos("Usuario no identificado");
-            return;
-        }
-
+        String uidConsulta = (userUid != null && !userUid.isEmpty()) ? userUid : "usr_docente";
         mostrarLoading(true);
 
-        final boolean[] done = {false, false, false};
-        final String ayer = obtenerFechaAyer();
-
-        // ── Asistencias ───────────────────────────────────────────────
-        db.collection("asistencias")
-                .whereEqualTo("profesorUid", userUid)
-                .whereGreaterThanOrEqualTo("fecha", fechaInicioMes)
-                .whereLessThanOrEqualTo("fecha", fechaFinMes)
+        okhttp3.OkHttpClient client = new okhttp3.OkHttpClient();
+        okhttp3.Request request = new okhttp3.Request.Builder()
+                .url("http://10.0.2.2:3000/api/asistencias/historial?uid=" + android.net.Uri.encode(uidConsulta))
                 .get()
-                .addOnSuccessListener(query -> {
-                    totalDiasAsistidosMes = query.size(); // todos del mes para la tarjeta
-                    totalDiasAsistidos    = 0;            // solo hasta ayer para inasistencias
-                    totalPuntuales        = 0;
-                    totalRetardos         = 0;
-                    fechaPrimeraAsistencia = "";
+                .build();
 
-                    for (QueryDocumentSnapshot doc : query) {
-                        String fechaDoc = doc.getString("fecha");
-                        String estado   = doc.getString("estado");
+        client.newCall(request).enqueue(new okhttp3.Callback() {
+            @Override
+            public void onFailure(okhttp3.Call call, java.io.IOException e) {
+                runOnUiThread(() -> mostrarSinDatos("Sin conexión con el servidor de asistencias"));
+            }
 
-                        // Puntualidad: contar todos del mes
-                        if ("puntual".equals(estado)) totalPuntuales++;
-                        else                          totalRetardos++;
+            @Override
+            public void onResponse(okhttp3.Call call, okhttp3.Response response) throws java.io.IOException {
+                String resStr = response.body() != null ? response.body().string() : "";
+                if (!response.isSuccessful()) {
+                    runOnUiThread(() -> mostrarSinDatos("Error al consultar reportes"));
+                    return;
+                }
 
-                        // Para inasistencias: solo contar asistencias hasta ayer
-                        if (fechaDoc != null && fechaDoc.compareTo(ayer) <= 0) {
-                            totalDiasAsistidos++;
-                        }
+                try {
+                    org.json.JSONObject obj = new org.json.JSONObject(resStr);
+                    totalDiasAsistidosMes = obj.optInt("totalDias", 0);
+                    totalPuntuales        = obj.optInt("puntuales", 0);
+                    totalRetardos         = obj.optInt("retardos", 0);
+                    totalClasesCubiertas  = totalDiasAsistidosMes;
+                    totalInasistencias    = 0;
+                    totalJustificaciones  = 0;
 
-                        // Primera asistencia del mes
-                        if (fechaDoc != null) {
-                            if (fechaPrimeraAsistencia.isEmpty()
-                                    || fechaDoc.compareTo(fechaPrimeraAsistencia) < 0) {
-                                fechaPrimeraAsistencia = fechaDoc;
-                            }
-                        }
-                    }
-
-                    // Calcular inasistencias
-                    if (query.isEmpty() || fechaPrimeraAsistencia.isEmpty()) {
-                        totalInasistencias = 0;
-                    } else {
-                        int diasConClases = calcularDiasConClasesDesde(fechaPrimeraAsistencia);
-                        totalInasistencias = diasConClases - totalDiasAsistidos;
-                        if (totalInasistencias < 0) totalInasistencias = 0;
-                    }
-
-                    Log.d(TAG, "Asistencias hasta ayer: " + totalDiasAsistidos
-                            + " | Días con clases: " + calcularDiasConClasesDesde(fechaPrimeraAsistencia)
-                            + " | Inasistencias: " + totalInasistencias);
-
-                    done[0] = true;
-                    if (done[1] && done[2]) mostrarTodo();
-                })
-                .addOnFailureListener(e -> {
-                    Log.e(TAG, "Error asistencias: " + e.getMessage());
-                    done[0] = true;
-                    if (done[1] && done[2]) mostrarTodo();
-                });
-
-        // ── Clases cubiertas ──────────────────────────────────────────
-        db.collection("clases_cubiertas")
-                .whereEqualTo("profesorUid", userUid)
-                .whereGreaterThanOrEqualTo("fecha", fechaInicioMes)
-                .whereLessThanOrEqualTo("fecha", fechaFinMes)
-                .get()
-                .addOnSuccessListener(query -> {
-                    totalClasesCubiertas = query.size();
                     listaClasesCubiertas.clear();
-                    for (QueryDocumentSnapshot doc : query) {
-                        listaClasesCubiertas.add(new HashMap<>(doc.getData()));
+                    org.json.JSONArray arr = obj.optJSONArray("asistencias");
+                    if (arr != null) {
+                        for (int i = 0; i < arr.length(); i++) {
+                            org.json.JSONObject item = arr.getJSONObject(i);
+                            Map<String, Object> map = new HashMap<>();
+                            String estado = item.optString("estado", "puntual");
+                            map.put("materia", "Asistencia Docente (" + estado.toUpperCase() + ")");
+                            map.put("grupo", item.optString("diaSemana", ""));
+                            map.put("fecha", item.optString("fecha", ""));
+                            map.put("horaInicio", item.optString("horaRegistro", ""));
+                            map.put("horaFin", "");
+                            map.put("salon", item.optString("qrCodigo", ""));
+                            int minDif = "retardo".equals(estado) ? Math.max(1, item.optInt("minutosDiferencia", 1)) : 0;
+                            map.put("retardoMinutos", minDif);
+                            listaClasesCubiertas.add(map);
+                        }
                     }
-                    done[1] = true;
-                    if (done[0] && done[2]) mostrarTodo();
-                })
-                .addOnFailureListener(e -> {
-                    Log.e(TAG, "Error clases: " + e.getMessage());
-                    done[1] = true;
-                    if (done[0] && done[2]) mostrarTodo();
-                });
 
-        // ── Retiros anticipados ───────────────────────────────────────
-        db.collection("retiros_anticipados")
-                .whereEqualTo("profesorUid", userUid)
-                .whereGreaterThanOrEqualTo("fecha", fechaInicioMes)
-                .whereLessThanOrEqualTo("fecha", fechaFinMes)
-                .get()
-                .addOnSuccessListener(query -> {
-                    totalJustificaciones = query.size();
-                    done[2] = true;
-                    if (done[0] && done[1]) mostrarTodo();
-                })
-                .addOnFailureListener(e -> {
-                    Log.e(TAG, "Error justificaciones: " + e.getMessage());
-                    done[2] = true;
-                    if (done[0] && done[1]) mostrarTodo();
-                });
+                    mostrarTodo();
+                } catch (Exception ex) {
+                    runOnUiThread(() -> mostrarSinDatos("Error procesando historial"));
+                }
+            }
+        });
     }
 
     // ══ HELPER: días con clases desde primera asistencia hasta ayer ══
@@ -856,6 +810,7 @@ public class Reportes extends AppCompatActivity {
         });
     }
 
+    @SuppressLint("MissingSuperCall")
     @Override
     public void onBackPressed() {
         finish();

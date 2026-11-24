@@ -11,14 +11,8 @@ pipeline {
 
         stage('2. Ejecutar Pruebas del Backend') {
             steps {
-                dir('backend') {
-                    sh 'npm ci'
-                    sh 'npm test'
-                }
-                dir('backend-usuarios') {
-                    sh 'npm ci'
-                    sh 'node -c src/app.js'
-                }
+                sh 'docker run --rm -u $(id -u):$(id -g) -e HOME=/tmp -v "$PWD/backend:/app" -w /app node:20-alpine sh -c "npm ci && npm test"'
+                sh 'docker run --rm -u $(id -u):$(id -g) -e HOME=/tmp -v "$PWD/backend-usuarios:/app" -w /app node:20-alpine sh -c "npm ci && node -c src/app.js"'
             }
         }
 
